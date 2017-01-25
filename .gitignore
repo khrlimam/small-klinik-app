@@ -1,0 +1,7 @@
+
+.idea/
+klinik-app.iml
+pom.xml
+src/
+target/
+*.log 

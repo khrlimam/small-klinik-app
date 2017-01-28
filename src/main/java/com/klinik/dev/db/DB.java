@@ -20,7 +20,7 @@ public class DB {
         try {
             DatabaseType databaseType = new DerbyEmbeddedDatabaseType();
             String protocol = "jdbc:derby:";
-            String dbUrl = String.format("%sderbyDB;create=true", protocol);
+            String dbUrl = String.format("%sklinikDB;create=true", protocol);
             connectionSource = new JdbcConnectionSource(dbUrl, databaseType);
         } catch (SQLException e) {
             e.printStackTrace();

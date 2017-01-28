@@ -15,21 +15,6 @@ import java.util.List;
 public class App {
 
     public static void josh(String[] args) {
-
-
-        try {
-            Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
-            Pasien pasien = new Pasien();
-            pasien.setNama("Sapri Al-Islah");
-            pasienDao.create(pasien);
-            List<Pasien> allPasien = pasienDao.queryForAll();
-            for (Pasien p : allPasien) {
-                System.out.println(String.format("%w\n", p.getNoRekamMedis()));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
 //
 //
 //        DateFormat df = new SimpleDateFormat("yyyy/MM/dd");

@@ -25,7 +25,7 @@
                         </Label>
                     </children>
                 </Pane>
-                <fx:include source="patientform.fxml"/>
+                <fx:include fx:id="patientForm" source="patientform.fxml"/>
             </children>
         </VBox>
     </children>

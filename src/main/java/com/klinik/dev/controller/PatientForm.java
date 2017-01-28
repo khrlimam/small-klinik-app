@@ -75,8 +75,7 @@ class PatientForm implements Initializable {
         String id = getRbStatus().getId();
         if (id.equals(rbSudah.getId()))
             return Pasien.STATUS.MENIKAH;
-        else
-            return Pasien.STATUS.BELUM_MENIKAH;
+        return Pasien.STATUS.BELUM_MENIKAH;
     }
 
 

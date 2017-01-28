@@ -8,6 +8,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.Data;
 import org.joda.time.DateTime;
 
+import java.util.UUID;
+
 /**
  * Created by khairulimam on 23/01/17.
  */
@@ -23,13 +25,13 @@ public @Data class Pasien {
     private DateTime tglLahir;
     @DatabaseField
     private String alamat;
-    @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "BELUM_MENIKAH")
+    @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "BELUM_MENIKAH", width = 20)
     private STATUS status;
     @DatabaseField(width = 15)
     private String noTelepon;
-    @DatabaseField
+    @DatabaseField(width = 20)
     private String pekerjaan;
-    @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "_")
+    @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "_", width = 30)
     private AGAMA agama;
     @DatabaseField(dataType = DataType.DATE_TIME)
     private DateTime tglRegister;

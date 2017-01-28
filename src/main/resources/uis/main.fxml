@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.klinik.dev.controller.Main">
+    <children>
+        <VBox prefHeight="577.0" prefWidth="727.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane/>
+                <Pane/>
+                <Pane>
+                    <children>
+                        <Label prefHeight="24.0" prefWidth="356.0" text="Private Patient Storage">
+                            <font>
+                                <Font size="19.0"/>
+                            </font>
+                            <padding>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                            </padding>
+                        </Label>
+                    </children>
+                </Pane>
+                <ToolBar>
+                    <items>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="tfSearch" onAction="#searchPatient" promptText="Nama, NO RM"/>
+                        <Button mnemonicParsing="false" onAction="#searchPatient" text="Cari"/>
+                    </items>
+                </ToolBar>
+                <Pane/>
+                <TabPane prefHeight="512.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="Jadwal Hari Ini">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="421.0" prefWidth="800.0">
+                                    <children>
+                                        <TableView layoutX="14.0" layoutY="55.0" prefHeight="413.0" prefWidth="772.0">
+                                            <columns>
+                                                <TableColumn prefWidth="75.0" text="NO RM"/>
+                                                <TableColumn prefWidth="75.0" text="Nama"/>
+                                                <TableColumn prefWidth="75.0" text="No Telpon"/>
+                                                <TableColumn prefWidth="75.0" text="JK"/>
+                                                <TableColumn prefWidth="75.0" text="Tgl. Lahir"/>
+                                                <TableColumn prefWidth="75.0" text="Alamat"/>
+                                            </columns>
+                                        </TableView>
+                                        <TextField layoutX="81.0" layoutY="21.0"/>
+                                        <Label layoutX="14.0" layoutY="26.0" text="Filter data:"/>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                        <Tab text="Tambah Pasien Baru">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <children>
+                                        <fx:include fx:id="patientForm" source="patientform.fxml"/>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

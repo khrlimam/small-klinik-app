@@ -17,7 +17,7 @@
                         <Label layoutY="-1.0" prefHeight="54.0" prefWidth="351.0" text="Patient Form"
                                textAlignment="CENTER" textFill="#ecf0f1">
                             <font>
-                                <Font size="23.0"/>
+                                <Font name="Montserrat Alternates Medium" size="23.0" />
                             </font>
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>

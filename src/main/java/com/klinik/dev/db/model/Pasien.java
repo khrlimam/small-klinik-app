@@ -5,16 +5,21 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.klinik.dev.Util;
+import com.klinik.dev.bussiness.BRule;
+import com.klinik.dev.bussiness.BTindakan;
 import lombok.Data;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
-import java.util.UUID;
+import java.util.List;
 
 /**
  * Created by khairulimam on 23/01/17.
  */
 @DatabaseTable(tableName = "pasien")
-public @Data class Pasien {
+@Data
+public class Pasien {
     @DatabaseField(generatedId = true, width = 4)
     private int noRekamMedis;
     @DatabaseField(width = 30)
@@ -36,15 +41,29 @@ public @Data class Pasien {
     @DatabaseField(dataType = DataType.DATE_TIME)
     private DateTime tglRegister;
     @DatabaseField(dataType = DataType.DATE_TIME)
-    private DateTime jadwalCheckUpSelanjutnya;
+    private DateTime checkupTerakhir;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
+    private Tindakan tindakan;
     @ForeignCollectionField
     private ForeignCollection<RiwayatTindakan> riwayatTindakans;
 
-    public boolean apakahHariIniJadwalCheckUp() {
-        DateTime dateTimeNow = new DateTime();
-        return dateTimeNow
-                .withTimeAtStartOfDay()
-                .isEqual(this.getJadwalCheckUpSelanjutnya().withTimeAtStartOfDay());
+//    private String jadwalSelanjutnya;
+
+    public String getCheckupTerakhirToString() {
+        if (checkupTerakhir != null)
+            return checkupTerakhir.toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
+        return "";
+    }
+
+    public String getJadwalSelanjutnya() {
+        if (tindakan == null)
+            return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        List<BRule> bRules = tindakan.getTindakan().getBRules();
+        for (BRule bRule: bRules) {
+            stringBuilder.append(String.format("%s tgl %s\n", bRule.getRuleName(), bRule.toStringDate(checkupTerakhir)));
+        }
+        return stringBuilder.toString();
     }
 
     public enum STATUS {
@@ -62,6 +81,5 @@ public @Data class Pasien {
         KONGHUCU,
         YAHUDI;
     }
-
 
 }

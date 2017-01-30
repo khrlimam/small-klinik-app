@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Sat Jan 28 23:13:08 WITA 2017:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-0159-e5a3-19d3-00000356fa78 
-on database directory /home/khairulimam/workspaces/JavaDev/klinik/klinik-app/klinikDB with class loader sun.misc.Launcher$AppClassLoader@45ee12a7 
+Mon Jan 30 21:44:55 WITA 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-0159-ef9f-0afe-0000030b8680 
+on database directory /home/khairulimam/workspaces/JavaDev/klinik/klinik-app/klinikDB with class loader sun.misc.Launcher$AppClassLoader@2503dbd3 
 Loaded from file:/home/khairulimam/.m2/repository/org/apache/derby/derby/10.13.1.1/derby-10.13.1.1.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_91-b14

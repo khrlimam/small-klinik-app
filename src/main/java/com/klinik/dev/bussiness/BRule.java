@@ -1,0 +1,32 @@
+package com.klinik.dev.bussiness;
+
+import com.klinik.dev.Util;
+import lombok.Data;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
+import java.io.Serializable;
+
+/**
+ * Created by khairulimam on 29/01/17.
+ */
+@Data
+public class BRule implements Serializable {
+    private String ruleName;
+    private int intervalDays;
+
+    public DateTime getNextCheckUp(DateTime lastCheckup) {
+        return lastCheckup.plusDays(this.intervalDays);
+    }
+
+    public boolean isTodayCheckup(DateTime lastCheckup) {
+        return getNextCheckUp(lastCheckup)
+                .withTimeAtStartOfDay()
+                .isEqual(lastCheckup.withTimeAtStartOfDay());
+    }
+
+    public String toStringDate(DateTime lastCheckup) {
+        return getNextCheckUp(lastCheckup).toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
+    }
+
+}

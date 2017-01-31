@@ -7,10 +7,14 @@ import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import tray.notification.NotificationType;
 import tray.notification.TrayNotification;
 
+import javax.tools.Tool;
 import java.sql.SQLException;
 
 /**
@@ -19,6 +23,7 @@ import java.sql.SQLException;
 public class Util {
     public static final String APP_NAME = "Klinik";
     public static final String DATE_PATTERN = "dd.MM.yyyy";
+    public static final String TABLE_CONTROL_TOOLTIP = "Pilih baris kemudian tekan:\n1. D/d untuk menghapus\n2. E/e untuk mengubah data";
 
     public static Class[] classes = {Pasien.class, RiwayatTindakan.class, Rule.class, Tindakan.class};
 
@@ -47,6 +52,26 @@ public class Util {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Tooltip tableControlTooltip() {
+        return new Tooltip(TABLE_CONTROL_TOOLTIP);
+    }
+
+    public static Alert setUpDialog(String title, String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        return alert;
+    }
+
+    public static Alert deleteConfirmation() {
+        return setUpDialog("Konfirmasi", "Yakin ingin menghapus data?", "Hati-hati dengan pilihan anda!", Alert.AlertType.CONFIRMATION);
+    }
+
+    public static Alert editConfirmation() {
+        return setUpDialog("Konfirmasi", "Yakin ingin mengubah data?", null, Alert.AlertType.CONFIRMATION);
     }
 
 }

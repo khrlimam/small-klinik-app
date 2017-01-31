@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.Data;
 import tray.notification.NotificationType;
 
@@ -60,6 +61,6 @@ public class Main implements Initializable, PopulateFxWithThis {
 
     @Override
     public void populate(Object data) {
-        semuaPasienController.getTblPasien().getItems().add((Pasien) data);
+        semuaPasienController.populateDataPasien((Pasien) data);
     }
 }

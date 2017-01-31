@@ -32,7 +32,6 @@ public class PatientForm implements Initializable {
     private OnOkFormContract formContract;
     private PopulateFxWithThis populateFxWithThis;
     private Pasien pasien = new Pasien();
-    private PopulateFxWithThis populateCbTindakanOnTindakanCreated;
 
     Dao<Tindakan, Integer> tindakans = DaoManager.createDao(DB.getDB(), Tindakan.class);
     private List<Tindakan> tindakanList = tindakans.queryForAll();
@@ -63,7 +62,11 @@ public class PatientForm implements Initializable {
         cbTindakan.getSelectionModel().select(0);
         cbAgama.setItems(getListAgama());
         cbAgama.getSelectionModel().select(0);
-        populateCbTindakanOnTindakanCreated = data -> addCbTindakanItem(data);
+    }
+
+    public void populateTindakanData(Object newTindakan) {
+        tindakanList.add((Tindakan) newTindakan);
+        addCbTindakanItem(((Tindakan) newTindakan).getTindakan());
     }
 
     private void addCbTindakanItem(Object o) {

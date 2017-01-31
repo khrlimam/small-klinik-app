@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,9 +48,11 @@ public class MainMenu extends Application {
         main.setPatientFormDialog(patientFormDialogController);
         main.setTindakanDanRuleStage(makeDialogStageFromLoaderAndOtherUnrospinsbleThings(TINDAKAN_AND_RULE_DIALOG, "Tambah tindakan dan rule", primaryStage));
         tindakanAndRuleFormDialogController.getTindakanFormController()
-                .setPopulateCbTindakanInPatientForm(patientFormDialogController
-                    .getPatientFormController()
-                    .getPopulateCbTindakanOnTindakanCreated());
+                .setPatientFormController(patientFormDialogController.getPatientFormController());
+//
+//                .setPopulateCbTindakanInPatientForm(patientFormDialogController
+//                    .getPatientFormController()
+//                    .getPopulateCbTindakanOnTindakanCreated());
         main.getPatientFormDialog().getPatientFormController().setPopulateFxWithThis(main);
         primaryStage.show();
     }

@@ -14,7 +14,7 @@
                 <Label layoutX="14.0" layoutY="26.0" text="Filter data:"/>
             </children>
         </Group>
-        <TableView fx:id="tblPasien" prefHeight="440.0" prefWidth="780.0">
+        <TableView fx:id="tblPasien" onKeyPressed="#onKeyPressed" prefHeight="440.0" prefWidth="780.0">
             <columns>
                 <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="noRmColumn" prefWidth="75.0" text="NO RM"/>
                 <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="namaColumn" prefWidth="200.0" text="Nama"/>

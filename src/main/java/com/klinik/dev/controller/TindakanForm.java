@@ -35,6 +35,9 @@ public class TindakanForm implements Initializable {
     private PopulateFxWithThis populateCbTindakanInPatientForm;
     private List<BRule> bRules;
 
+//    bullshit with oo rule
+    private PatientForm patientFormController;
+
     private Dao<Rule, Integer> rules = DaoManager.createDao(DB.getDB(), Rule.class);
     private List<Rule> allRules = rules.queryForAll();
 
@@ -89,8 +92,8 @@ public class TindakanForm implements Initializable {
             onOkFormContract.onPositiveButtonClicked(tindakan);
             if (populateFxWithThis != null)
                 populateFxWithThis.populate(bTindakan);
-            if (populateCbTindakanInPatientForm != null)
-                populateCbTindakanInPatientForm.populate(bTindakan);
+            if (patientFormController != null)
+                patientFormController.populateTindakanData(tindakan);
             return;
         }
         Log.w(getClass(), "Contract ain't implemented yet");

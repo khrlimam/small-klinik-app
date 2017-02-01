@@ -67,7 +67,7 @@
                                 <Insets right="5.0"/>
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="btnSegarkan" mnemonicParsing="false" text="Segarkan"/>
+                        <Button fx:id="btnSegarkan" onAction="#resetForm" mnemonicParsing="false" text="Segarkan"/>
                     </children>
                 </HBox>
                 <Label text="Tindakan"/>

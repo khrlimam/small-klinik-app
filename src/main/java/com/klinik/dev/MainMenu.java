@@ -38,9 +38,5 @@ public class MainMenu extends Application {
         primaryStage.setTitle(Util.APP_NAME);
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
-        Dao<Rule, Integer> ruleD = DaoManager.createDao(DB.getDB(), Rule.class);
-        Rule rule = ruleD.queryBuilder().queryForFirst();
-        rule.getRule().setIntervalDays(-4);
-        ruleD.update(rule);
     }
 }

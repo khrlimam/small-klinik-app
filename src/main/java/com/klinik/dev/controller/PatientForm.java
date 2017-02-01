@@ -62,6 +62,7 @@ public class PatientForm implements Initializable {
         EventBus.getInstance().register(this);
         initCbTindakanItems();
         initComponents();
+        resetForm();
     }
 
     private void initComponents() {
@@ -118,6 +119,17 @@ public class PatientForm implements Initializable {
         return Pasien.STATUS.BELUM_MENIKAH;
     }
 
+    @FXML
+    public void resetForm() {
+        tfNama.setText("");
+        tfNamaPanggilan.setText("");
+        tfNoTelpon.setText("");
+        tfPekerjaan.setText("");
+        cbAgama.getSelectionModel().select(0);
+        taAlamat.setText("");
+        cbTindakan.getSelectionModel().select(0);
+        rbStatusToggleGroup.getSelectedToggle().setSelected(false);
+    }
 
     public Pasien getPasien() {
         Pasien pasien = new Pasien();

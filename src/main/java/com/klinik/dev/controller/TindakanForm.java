@@ -78,7 +78,7 @@ public class TindakanForm implements Initializable {
     private void onOkCreate() {
         Tindakan tindakan = getTindakan();
         if (onOkFormContract != null) {
-            onOkFormContract.onPositiveButtonClicked(tindakan);
+            onOkFormContract.onPositive(tindakan);
             return;
         }
         Log.w(getClass(), "Contract ain't implemented yet");

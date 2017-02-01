@@ -36,7 +36,7 @@ public class RuleForm implements Initializable {
     @FXML
     private void onOkCreate() {
         if (onOkFormContract != null) {
-            onOkFormContract.onPositiveButtonClicked(getRule());
+            onOkFormContract.onPositive(getRule());
             return;
         }
         Log.w(getClass(), "Contract ain't implemented");

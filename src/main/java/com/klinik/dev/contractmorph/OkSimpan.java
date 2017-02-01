@@ -16,7 +16,7 @@ public class OkSimpan implements OnOkFormContract {
     private Dao tableDao;
 
     @Override
-    public void onPositiveButtonClicked(Object object) {
+    public void onPositive(Object object) {
         try {
             int create = tableDao.create(object);
             if (create == 1)

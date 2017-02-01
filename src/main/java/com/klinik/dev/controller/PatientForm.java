@@ -84,7 +84,7 @@ public class PatientForm implements Initializable {
     protected void onOk() {
         Pasien newPasien = getPasien();
         if (this.formContract != null) {
-            formContract.onPositiveButtonClicked(newPasien);
+            formContract.onPositive(newPasien);
             return;
         }
         Log.w(PatientForm.class, "Contract ain't implemented yet!");

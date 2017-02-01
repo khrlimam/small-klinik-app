@@ -6,7 +6,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
 import com.klinik.dev.MainMenu;
 import com.klinik.dev.Util;
-import com.klinik.dev.datastructure.ComparableCollections;
+import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
@@ -17,16 +17,19 @@ import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
 import com.klinik.dev.events.RiwayatTindakanEvent;
 import com.klinik.dev.events.TindakanEvent;
+import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
@@ -48,7 +51,7 @@ import java.util.ResourceBundle;
  * Created by khairulimam on 29/01/17.
  */
 @Data
-public class TblSemuaPasien implements Initializable {
+public class TblSemuaPasien implements Initializable, OnOkFormContract {
 
     private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
     private Dao<Tindakan, Integer> tindakans = DaoManager.createDao(DB.getDB(), Tindakan.class);
@@ -73,6 +76,7 @@ public class TblSemuaPasien implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         com.klinik.dev.events.EventBus.getInstance().register(this);
+        tblPasien.setEditable(true);
         tblPasien.setItems(getPasiensSortedList());
         tblPasien.setTooltip(Util.tableControlTooltip());
         jadwalCheckupColumn.setCellFactory(column -> {
@@ -108,6 +112,50 @@ public class TblSemuaPasien implements Initializable {
         noTelponColumn.setCellValueFactory(new PropertyValueFactory<>("noTelepon"));
         alamatColumn.setCellValueFactory(new PropertyValueFactory<>("alamat"));
         jadwalCheckupColumn.setCellValueFactory(new PropertyValueFactory<>("pasien"));
+
+        namaColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        noTelponColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        alamatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        namaColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Pasien, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Pasien, String> t) {
+                Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
+                p.setNama(t.getNewValue());
+                try {
+                    pasienDao.update(p);
+                    EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        noTelponColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Pasien, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Pasien, String> t) {
+                Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
+                p.setNoTelepon(t.getNewValue());
+                try {
+                    pasienDao.update(p);
+                    EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        alamatColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Pasien, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Pasien, String> t) {
+                Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
+                p.setAlamat(t.getNewValue());
+                try {
+                    pasienDao.update(p);
+                    EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private SortedList<Pasien> getPasiensSortedList() {
@@ -227,5 +275,10 @@ public class TblSemuaPasien implements Initializable {
                 tindakanList.add(tindakan);
                 break;
         }
+    }
+
+    @Override
+    public void onPositive(@Nullable Object data) {
+
     }
 }

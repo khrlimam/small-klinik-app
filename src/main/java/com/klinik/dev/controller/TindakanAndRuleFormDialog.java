@@ -57,7 +57,7 @@ public class TindakanAndRuleFormDialog implements Initializable {
         }
 
         @Override
-        public void onPositiveButtonClicked(@Nullable Object data) {
+        public void onPositive(@Nullable Object data) {
             int create = 0;
             switch (metode) {
                 case SIMPAN_RULE:

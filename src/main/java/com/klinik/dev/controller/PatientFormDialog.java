@@ -38,7 +38,7 @@ public class PatientFormDialog implements Initializable, OnOkFormContract {
         patientFormController.setFormContract(this);
     }
 
-    public void onPositiveButtonClicked(Object object) {
+    public void onPositive(Object object) {
         Pasien pasien = (Pasien) object;
         try {
             int created = pasienDao.create(pasien);

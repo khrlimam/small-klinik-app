@@ -1,4 +1,4 @@
-package com.klinik.dev;
+package com.klinik.dev.util;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

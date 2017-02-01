@@ -3,7 +3,7 @@ package com.klinik.dev.controller;
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.Log;
+import com.klinik.dev.util.Log;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
 import com.klinik.dev.db.DB;

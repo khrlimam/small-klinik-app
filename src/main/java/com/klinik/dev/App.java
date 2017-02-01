@@ -4,6 +4,7 @@ package com.klinik.dev;
  * Created by khairulimam on 26/01/17.
  */
 
+import com.klinik.dev.util.Util;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +14,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class MainMenu extends Application {
+public class App extends Application {
 
     private static final String MAIN_UI = "/uis/main.fxml";
 

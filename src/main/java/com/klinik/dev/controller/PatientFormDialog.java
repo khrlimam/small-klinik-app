@@ -2,7 +2,7 @@ package com.klinik.dev.controller;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.Util;
+import com.klinik.dev.util.Util;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;

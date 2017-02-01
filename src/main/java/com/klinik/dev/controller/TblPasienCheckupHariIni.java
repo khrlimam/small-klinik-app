@@ -3,8 +3,7 @@ package com.klinik.dev.controller;
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.Log;
-import com.klinik.dev.Util;
+import com.klinik.dev.util.Util;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
@@ -108,11 +107,6 @@ public class TblPasienCheckupHariIni implements Initializable {
                     }
                 }
                 return;
-            case E:
-                decision = Util.editConfirmation().showAndWait();
-                if (decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE))
-                    Log.i(getClass(), "Edit table with index " + tblPasien.getSelectionModel().getSelectedIndex());
-                break;
             case C:
                 ChoiceDialog tindakanChoiceDialog = new ChoiceDialog(null, getListTindakanString());
                 tindakanChoiceDialog.setHeaderText("Pilih tindakan");

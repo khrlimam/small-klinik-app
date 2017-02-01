@@ -2,8 +2,8 @@ package com.klinik.dev.controller;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.MainMenu;
-import com.klinik.dev.Util;
+import com.klinik.dev.App;
+import com.klinik.dev.util.Util;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import javafx.fxml.FXML;
@@ -40,8 +40,8 @@ public class Main implements Initializable {
     public Main() throws SQLException {}
 
     public void initialize(URL location, ResourceBundle resources) {
-        pasienStage = makeDialogStage("/uis/patientdialog.fxml", "Tambah pasien", MainMenu.PRIMARY_STAGE);
-        tindakanDanRuleStage = makeDialogStage("/uis/tindakanruleformdialog.fxml", "Tambah rule dan tindakan", MainMenu.PRIMARY_STAGE);
+        pasienStage = makeDialogStage("/uis/patientdialog.fxml", "Tambah pasien", App.PRIMARY_STAGE);
+        tindakanDanRuleStage = makeDialogStage("/uis/tindakanruleformdialog.fxml", "Tambah rule dan tindakan", App.PRIMARY_STAGE);
 //        override those table so both having same pasien object reference
         tblSemuaPasienController.overrideItems(pasiens);
         tblPasienCheckupHariIniController.overrideItems(pasiens);

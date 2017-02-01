@@ -3,9 +3,8 @@ package com.klinik.dev.controller;
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.Log;
-import com.klinik.dev.MainMenu;
-import com.klinik.dev.Util;
+import com.klinik.dev.App;
+import com.klinik.dev.util.Util;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
@@ -194,7 +193,7 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
                 Stage stage = new Stage();
                 stage.setTitle(String.format("Riwayat Medis %s", selectedPasien.getNamaPanggilan()));
                 stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(MainMenu.PRIMARY_STAGE);
+                stage.initOwner(App.PRIMARY_STAGE);
                 Scene scene = new Scene(pane);
                 stage.setScene(scene);
                 stage.showAndWait();
@@ -210,11 +209,6 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
                     }
                 }
                 return;
-            case E:
-                decision = Util.editConfirmation().showAndWait();
-                if (decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE))
-                    Log.i(getClass(), "josh");
-                break;
             case C:
                 ChoiceDialog<String> tindakanChoiceDialog = new ChoiceDialog<>(null, getListTindakanString());
                 tindakanChoiceDialog.setHeaderText("Pilih tindakan");

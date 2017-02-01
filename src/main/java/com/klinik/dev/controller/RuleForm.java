@@ -1,6 +1,6 @@
 package com.klinik.dev.controller;
 
-import com.klinik.dev.Log;
+import com.klinik.dev.util.Log;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
 import com.klinik.dev.db.model.Rule;

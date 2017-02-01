@@ -46,7 +46,7 @@
                         <Insets bottom="3.0"/>
                     </VBox.margin>
                 </Label>
-                <ListView fx:id="lvRules" prefHeight="200.0" prefWidth="200.0">
+                <ListView fx:id="lvRules" onKeyPressed="#onKeyPressed" prefHeight="200.0" prefWidth="200.0">
                     <VBox.margin>
                         <Insets bottom="10.0"/>
                     </VBox.margin>

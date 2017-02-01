@@ -7,8 +7,8 @@ import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
-import com.klinik.dev.events.EventBus;
 import com.klinik.dev.enums.OPERATION_TYPE;
+import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,8 +26,7 @@ import java.util.ResourceBundle;
 public class PatientFormDialog implements Initializable, OnOkFormContract {
 
     private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
-
-    private int noRm;
+    private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
 
     @FXML
     PatientForm patientFormController;
@@ -46,6 +45,7 @@ public class PatientFormDialog implements Initializable, OnOkFormContract {
             RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
             riwayatTindakan.setPasien(pasien);
             riwayatTindakan.setTindakan(pasien.getTindakan());
+            riwayatTindakanDao.create(riwayatTindakan);
             if (created == 1) {
                 Util.showNotif("Sukses", "Berhasil menambahkan data", NotificationType.SUCCESS);
                 EventBus.getInstance().post(new PasienEvent(pasien, OPERATION_TYPE.CREATE));

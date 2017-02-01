@@ -5,7 +5,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.klinik.dev.bussiness.BRule;
 import com.klinik.dev.contract.Comparable;
 import com.klinik.dev.enums.AGAMA;
 import com.klinik.dev.enums.STATUS;
@@ -51,6 +50,10 @@ public class Pasien implements Comparable {
         return checkupTerakhir.withTimeAtStartOfDay();
     }
 
+    public DateTime getCheckupTerakhirActualDate() {
+        return this.checkupTerakhir;
+    }
+
     public Pasien getPasien() {
         return this;
     }
@@ -59,9 +62,9 @@ public class Pasien implements Comparable {
         if (tindakan == null)
             return "";
         StringBuilder stringBuilder = new StringBuilder();
-        List<BRule> bRules = tindakan.getTindakan().getBRules();
-        for (BRule bRule : bRules) {
-            stringBuilder.append(String.format("(%s) tgl %s\n", bRule.getRuleName(), bRule.toStringDate(checkupTerakhir)));
+        List<Rule> rules = tindakan.getRules().getRules();
+        for (Rule rule : rules) {
+            stringBuilder.append(String.format("(%s) tgl %s\n", rule.getRuleName(), rule.toStringDate(checkupTerakhir)));
         }
         return stringBuilder.toString();
     }

@@ -21,6 +21,13 @@ public class RiwayatTindakan implements Comparable {
     private boolean status;
 
     @Override
+    public String toString() {
+        String tgl = pasien.getCheckupTerakhirActualDate().toString("dd.MM.yyyy");
+        String jam = pasien.getCheckupTerakhirActualDate().toString("HH:mm:ss");
+        return String.format("Melakukan %s pada tgl %s jam %s", tindakan.getNamaTindakan(), tgl, jam);
+    }
+
+    @Override
     public int toBeCompared() {
         return this.id;
     }

@@ -5,17 +5,17 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
 import com.klinik.dev.Util;
-import com.klinik.dev.bussiness.BRule;
-import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
+import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
-import com.klinik.dev.events.EventBus;
 import com.klinik.dev.enums.OPERATION_TYPE;
+import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
 import com.klinik.dev.events.TindakanEvent;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -27,7 +27,10 @@ import tray.notification.NotificationType;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * Created by khairulimam on 29/01/17.
@@ -40,8 +43,8 @@ public class TblPasienCheckupHariIni implements Initializable {
     private Dao<RiwayatTindakan, Integer> riwayatTindakans = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
 
     private List<Pasien> pasiens = pasienDao.queryForAll();
-    private List<Pasien> pasienhariIni = new ArrayList<>();
     private List<Tindakan> tindakanList = tindakans.queryForAll();
+    private ObservableList<Pasien> pasienHariIni;
 
     @FXML
     private TextField tfFilterTable;
@@ -56,22 +59,28 @@ public class TblPasienCheckupHariIni implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
-        tblPasien.setItems(FXCollections.observableArrayList(jadwalPasienHariIni()));
+        jadwalPasienHariIni(pasiens);
+        tblPasien.setItems(pasienHariIni);
         setUpTableColumnItems();
     }
 
-    private List<Pasien> jadwalPasienHariIni() {
+    private void jadwalPasienHariIni(List<Pasien> pasiens) {
+        pasienHariIni = FXCollections.observableArrayList();
         for (Pasien p : pasiens) {
             if (p.getTindakan() != null)
-                for (BRule bRule : p.getTindakan().getTindakan().getBRules()) {
-                    if (bRule != null)
-                        if (bRule.isTodayCheckup(p.getCheckupTerakhir())) {
-                            this.pasienhariIni.add(p);
-                            break; //break the loop one condition is satisfied
+                for (Rule rule : p.getTindakan().getRules().getRules()) {
+                    if (rule != null)
+                        if (rule.isTodayCheckup(p.getCheckupTerakhir())) {
+                            this.pasienHariIni.add(p);
+                            break;
                         }
                 }
         }
-        return this.pasienhariIni;
+    }
+
+    public void overrideItems(List<Pasien> pasiens) {
+        jadwalPasienHariIni(pasiens);
+        tblPasien.setItems(pasienHariIni);
     }
 
     private void setUpTableColumnItems() {
@@ -83,7 +92,7 @@ public class TblPasienCheckupHariIni implements Initializable {
 
     public void onKeyPressed(KeyEvent keyEvent) throws SQLException {
         Optional<ButtonType> decision;
-        Pasien selectedPasien = pasienhariIni.get(tblPasien.getSelectionModel().getSelectedIndex());
+        Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
         switch (keyEvent.getCode()) {
             case D:
                 decision = Util.deleteConfirmation().showAndWait();
@@ -126,8 +135,8 @@ public class TblPasienCheckupHariIni implements Initializable {
     }
 
     private boolean isPasienMustCheckupHariIni(Pasien selectedPasien) {
-        for (BRule bRule : selectedPasien.getTindakan().getTindakan().getBRules()) {
-            if (bRule.isTodayCheckup(selectedPasien.getCheckupTerakhir())) {
+        for (Rule rule : selectedPasien.getTindakan().getRules().getRules()) {
+            if (rule.isTodayCheckup(selectedPasien.getCheckupTerakhir())) {
                 return true;
             }
         }
@@ -138,7 +147,7 @@ public class TblPasienCheckupHariIni implements Initializable {
         List<String> l = new ArrayList<>();
         int index = 0;
         for (Tindakan tindakan : tindakanList)
-            l.add(String.format("%d. %s", ++index, tindakan.getTindakan().getNamaTindakan()));
+            l.add(String.format("%d. %s", ++index, tindakan.toString()));
         return l;
     }
 
@@ -146,42 +155,33 @@ public class TblPasienCheckupHariIni implements Initializable {
     public void onPasien(PasienEvent pasienEvent) {
         Pasien pasien = pasienEvent.getPasien();
         boolean isMust = isPasienMustCheckupHariIni(pasien);
-        int index = ComparableCollections.binarySearch(pasienhariIni, pasien);
+        int index = pasienHariIni.indexOf(pasien);
         boolean pasienDitemukan = index > -1;
         if (isMust) {
             if (!pasienDitemukan) {
-                pasienhariIni.add(pasien);
-                tblPasien.getItems().add(pasien);
-            } else if (pasienDitemukan && pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.UPDATE) {
-                pasienhariIni.set(index, pasien);
-                tblPasien.getItems().set(index, pasien);
-            } else if (pasienDitemukan && pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.DELETE) {
-                pasienhariIni.remove(index);
-                tblPasien.getItems().remove(index);
+                pasienHariIni.add(pasien);
+            } else if (pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.UPDATE) {
+                pasienHariIni.set(index, pasien);
+            } else if (pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.DELETE) {
+                pasienHariIni.remove(index);
             }
-        }else if (!isMust && pasienDitemukan) {
-            pasienhariIni.remove(index);
-            tblPasien.getItems().remove(index);
+        } else if (!isMust && pasienDitemukan) {
+            pasienHariIni.remove(pasienHariIni.indexOf(pasien));
         }
     }
 
     @Subscribe
     public void onTindakan(TindakanEvent tindakanEvent) {
-        int index;
         Tindakan tindakan = tindakanEvent.getTindakan();
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case CREATE:
                 tindakanList.add(tindakan);
                 break;
             case UPDATE:
-                index = ComparableCollections.binarySearch(tindakanList, tindakan);
-                if (index > -1)
-                    tindakanList.set(index, tindakan);
+                tindakanList.set(tindakanList.indexOf(tindakan), tindakan);
                 break;
             case DELETE:
-                index = ComparableCollections.binarySearch(tindakanList, tindakan);
-                if (index > -1)
-                    tindakanList.remove(index);
+                tindakanList.remove(tindakanList.indexOf(tindakan));
                 break;
         }
     }

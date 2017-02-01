@@ -44,7 +44,7 @@
                                     <children>
                                         <fx:include AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                                    source="tblsemuapasien.fxml" fx:id="semuaPasien"/>
+                                                    source="tblsemuapasien.fxml" fx:id="tblSemuaPasien"/>
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -55,7 +55,7 @@
                                     <children>
                                         <fx:include AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                                    source="tblpasiencheckuphariini.fxml" fx:id="pasienCheckupHariIni"/>
+                                                    source="tblpasiencheckuphariini.fxml" fx:id="tblPasienCheckupHariIni"/>
                                     </children>
                                 </AnchorPane>
                             </content>

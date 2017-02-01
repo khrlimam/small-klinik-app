@@ -4,10 +4,8 @@ import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
-import com.klinik.dev.bussiness.BTindakan;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
-import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.Tindakan;
@@ -26,7 +24,6 @@ import org.joda.time.DateTime;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -38,7 +35,7 @@ public class PatientForm implements Initializable {
     private OnOkFormContract formContract;
 
     private Dao<Tindakan, Integer> tindakans = DaoManager.createDao(DB.getDB(), Tindakan.class);
-    private List<Tindakan> tindakanList = tindakans.queryForAll();
+    private ObservableList<Tindakan> tindakanLists = FXCollections.observableArrayList(tindakans.queryForAll());
 
     @FXML
     private TextField tfNama, tfNamaPanggilan, tfPekerjaan;
@@ -60,7 +57,7 @@ public class PatientForm implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
-        initCbTindakanItems();
+        cbTindakan.setItems(tindakanLists);
         initComponents();
         resetForm();
     }
@@ -73,21 +70,6 @@ public class PatientForm implements Initializable {
         cbTindakan.getSelectionModel().select(0);
         cbAgama.setItems(getListAgama());
         cbAgama.getSelectionModel().select(0);
-    }
-
-    public void populateTindakanData(Object newTindakan) {
-        tindakanList.add((Tindakan) newTindakan);
-        addCbTindakanItem(((Tindakan) newTindakan).getTindakan());
-    }
-
-    private void addCbTindakanItem(Object o) {
-        cbTindakan.getItems().add(((BTindakan) o).getNamaTindakan());
-    }
-
-    private void initCbTindakanItems() {
-        for (Tindakan tindakan : tindakanList) {
-            addCbTindakanItem(tindakan.getTindakan());
-        }
     }
 
     private ObservableList getListAgama() {
@@ -142,8 +124,8 @@ public class PatientForm implements Initializable {
         pasien.setAlamat(taAlamat.getText());
         pasien.setTglLahir(new DateTime(dtTglLahir.getValue().toString()));
         pasien.setTglRegister(new DateTime());
-        pasien.setTindakan(tindakanList.get(cbTindakan.getSelectionModel().getSelectedIndex()));
-        pasien.setCheckupTerakhir(DateTime.now().withTimeAtStartOfDay());
+        pasien.setTindakan((Tindakan) cbTindakan.getSelectionModel().getSelectedItem());
+        pasien.setCheckupTerakhir(DateTime.now());
         return pasien;
     }
 
@@ -153,21 +135,13 @@ public class PatientForm implements Initializable {
         Tindakan tindakan = tindakanEvent.getTindakan();
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case CREATE:
-                populateTindakanData(tindakan);
+                tindakanLists.add(tindakan);
                 break;
             case DELETE:
-                index = ComparableCollections.binarySearch(tindakanList, tindakan);
-                if (index > -1) {
-                    tindakanList.remove(index);
-                    cbTindakan.getItems().remove(index);
-                }
+                tindakanLists.remove(tindakanLists.indexOf(tindakan));
                 break;
             case UPDATE:
-                index = ComparableCollections.binarySearch(tindakanList, tindakan);
-                if (index > -1) {
-                    tindakanList.set(index, tindakan);
-                    cbTindakan.getItems().set(index, tindakan);
-                }
+                tindakanLists.set(tindakanLists.indexOf(tindakan), tindakan);
                 break;
         }
     }

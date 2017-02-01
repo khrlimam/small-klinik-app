@@ -1,7 +1,6 @@
 package com.klinik.dev.controller;
 
 import com.klinik.dev.Log;
-import com.klinik.dev.bussiness.BRule;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
 import com.klinik.dev.db.model.Rule;
@@ -45,10 +44,8 @@ public class RuleForm implements Initializable {
 
     public Rule getRule() {
         Rule rule = new Rule();
-        BRule bRule = new BRule();
-        bRule.setIntervalDays(Integer.parseInt(tfJarakHari.getText()));
-        bRule.setRuleName(tfNamaJenisRule.getText());
-        rule.setRule(bRule);
+        rule.setIntervalDays(Integer.parseInt(tfJarakHari.getText()));
+        rule.setRuleName(tfNamaJenisRule.getText());
         return rule;
     }
 

@@ -4,26 +4,31 @@ import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
-import com.klinik.dev.bussiness.BRule;
-import com.klinik.dev.bussiness.BTindakan;
+import com.klinik.dev.Util;
+import com.klinik.dev.bussiness.Rules;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RuleEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import lombok.Data;
+import tray.notification.NotificationType;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -33,61 +38,37 @@ import java.util.ResourceBundle;
 public class TindakanForm implements Initializable {
 
     private OnOkFormContract onOkFormContract;
-    private List<BRule> bRules;
 
-    private Dao<Rule, Integer> rules = DaoManager.createDao(DB.getDB(), Rule.class);
-    private List<Rule> allRules = rules.queryForAll();
+    private Dao<Rule, Integer> ruleDao = DaoManager.createDao(DB.getDB(), Rule.class);
+    private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
+
+    private ObservableList<Rule> ruleLists = FXCollections.observableArrayList(ruleDao.queryForAll());
 
     @FXML
     private TextField tfNamaTindakan;
     @FXML
-    private ListView lvRules;
+    private ListView<Rule> lvRules;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.bRules = getbRules();
-        initLvRulesItems();
+        EventBus.getInstance().register(this);
+        this.lvRules.setItems(ruleLists);
         this.lvRules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         EventBus.getInstance().register(this);
     }
 
-    private String formatBRuleToString(BRule bRule) {
-        return String.format("%s (%d hari)", bRule.getRuleName(), bRule.getIntervalDays());
-    }
-
-    private void addRulesItem(BRule bRule) {
-        this.bRules.add(bRule);
-        this.lvRules.getItems().add(formatBRuleToString(bRule));
-    }
-
     private void updateRulesItem(Rule rule) {
-        int indexOfUpdatedRule = ComparableCollections.binarySearch(allRules, rule);
+        int indexOfUpdatedRule = ComparableCollections.binarySearch(ruleLists, rule);
         if (indexOfUpdatedRule > -1) {
-            this.bRules.set(indexOfUpdatedRule, rule.getRule());
-            this.lvRules.getItems().set(indexOfUpdatedRule, formatBRuleToString(rule.getRule()));
+            this.ruleLists.set(indexOfUpdatedRule, rule);
         }
     }
 
     private void deleteRulesItem(Rule rule) {
-        int index = ComparableCollections.binarySearch(allRules, rule);
+        int index = ComparableCollections.binarySearch(ruleLists, rule);
         if (index > -1) {
-            this.bRules.remove(index);
-            this.lvRules.getItems().remove(index);
+            this.ruleLists.remove(index);
         }
-    }
-
-    private void initLvRulesItems() {
-        for (BRule rule : this.bRules) {
-            this.lvRules.getItems().add(formatBRuleToString(rule));
-        }
-    }
-
-    private List<BRule> getbRules() {
-        List<BRule> bRules = new ArrayList<>();
-        for (Rule rule : this.allRules) {
-            bRules.add(rule.getRule());
-        }
-        return bRules;
     }
 
     public TindakanForm() throws SQLException {
@@ -105,34 +86,48 @@ public class TindakanForm implements Initializable {
 
     public Tindakan getTindakan() {
         Tindakan tindakan = new Tindakan();
-        BTindakan bTindakan = new BTindakan();
-        bTindakan.setNamaTindakan(tfNamaTindakan.getText());
-        bTindakan.setBRules(getSelectedRulesFromLvRules());
-        tindakan.setTindakan(bTindakan);
+        tindakan.setNamaTindakan(tfNamaTindakan.getText());
+        tindakan.setRules(new Rules(getSelectedRulesFromLvRules()));
         return tindakan;
     }
 
-    private List<BRule> getSelectedRulesFromLvRules() {
-        List<BRule> bRules = new ArrayList<>();
+    private List<Rule> getSelectedRulesFromLvRules() {
+        List<Rule> rules = new ArrayList<>();
         List<Integer> selectedIndices = lvRules.getSelectionModel().getSelectedIndices();
         for (Integer i : selectedIndices) {
-            bRules.add(this.bRules.get(i));
+            rules.add(this.ruleLists.get(i));
         }
-        return bRules;
+        return rules;
     }
 
     @Subscribe
     public void onRule(RuleEvent ruleEvent) {
+        Rule rule = ruleEvent.getRule();
         switch (ruleEvent.getOPERATION_TYPE()) {
             case CREATE:
-                addRulesItem(ruleEvent.getRule().getRule());
+                this.ruleLists.add(rule);
                 break;
             case UPDATE:
-                updateRulesItem(ruleEvent.getRule());
+                updateRulesItem(rule);
                 break;
             case DELETE:
-                deleteRulesItem(ruleEvent.getRule());
+                deleteRulesItem(rule);
                 break;
+        }
+    }
+
+    public void onKeyPressed(KeyEvent keyEvent) throws SQLException {
+        if (keyEvent.getCode() == KeyCode.D) {
+            Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
+            boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
+            if (isOK) {
+                Rule rule = ruleLists.get(lvRules.getSelectionModel().getSelectedIndex());
+                int deleted = ruleDao.delete(rule);
+                if (deleted == 1) {
+                    Util.showNotif("Sukses", "Data rule telah dihapus", NotificationType.SUCCESS);
+                    EventBus.getInstance().post(new RuleEvent(rule, OPERATION_TYPE.DELETE));
+                }
+            }
         }
     }
 }

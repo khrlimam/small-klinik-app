@@ -2,8 +2,8 @@ package com.klinik.dev.db.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.klinik.dev.util.Util;
 import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;
 import org.joda.time.Days;

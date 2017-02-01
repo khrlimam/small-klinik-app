@@ -2,7 +2,6 @@ package com.klinik.dev.controller;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.util.Util;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
@@ -11,6 +10,7 @@ import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RuleEvent;
 import com.klinik.dev.events.TindakanEvent;
+import com.klinik.dev.util.Util;
 import com.sun.istack.internal.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

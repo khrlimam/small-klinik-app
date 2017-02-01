@@ -1,8 +1,6 @@
 package com.klinik.dev.bussiness;
 
-import com.google.common.eventbus.Subscribe;
 import com.klinik.dev.db.model.Rule;
-import com.klinik.dev.events.RuleEvent;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -8,6 +8,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.Util;
 import com.klinik.dev.bussiness.BRule;
 import com.klinik.dev.bussiness.BTindakan;
+import com.klinik.dev.contract.Searchable;
+import javafx.beans.property.ObjectProperty;
 import lombok.Data;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -19,7 +21,7 @@ import java.util.List;
  */
 @DatabaseTable(tableName = "pasien")
 @Data
-public class Pasien {
+public class Pasien implements Searchable {
     @DatabaseField(generatedId = true, width = 4)
     private int noRekamMedis;
     @DatabaseField(width = 30)
@@ -47,12 +49,18 @@ public class Pasien {
     @ForeignCollectionField
     private ForeignCollection<RiwayatTindakan> riwayatTindakans;
 
-//    private String jadwalSelanjutnya;
+    public DateTime getCheckupTerakhir() {
+        return checkupTerakhir.withTimeAtStartOfDay();
+    }
 
     public String getCheckupTerakhirToString() {
         if (checkupTerakhir != null)
             return checkupTerakhir.toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
         return "";
+    }
+
+    public Pasien getPasien() {
+        return this;
     }
 
     public String getJadwalSelanjutnya() {
@@ -64,6 +72,11 @@ public class Pasien {
             stringBuilder.append(String.format("%s tgl %s\n", bRule.getRuleName(), bRule.toStringDate(checkupTerakhir)));
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public int getInt() {
+        return this.noRekamMedis;
     }
 
     public enum STATUS {

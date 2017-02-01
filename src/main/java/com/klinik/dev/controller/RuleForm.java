@@ -3,6 +3,7 @@ package com.klinik.dev.controller;
 import com.klinik.dev.Log;
 import com.klinik.dev.bussiness.BRule;
 import com.klinik.dev.contract.OnOkFormContract;
+import com.klinik.dev.customui.NumberTextField;
 import com.klinik.dev.db.model.Rule;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,23 +15,27 @@ import java.util.ResourceBundle;
 
 /**
  * Created by khairulimam on 29/01/17.
+ * <p>
+ * <b>This class only acting as controller for ruleform.fxml</b>
+ * all implementations done through interface/contract
  */
 @Data
 public class RuleForm implements Initializable {
 
     private OnOkFormContract onOkFormContract;
-    private Rule rule = new Rule();
 
     @FXML
-    TextField tfNamaJenisRule, tfJarakHari;
+    TextField tfNamaJenisRule;
+    @FXML
+    NumberTextField tfJarakHari;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tfJarakHari.lengthProperty().addListener(new OnlyNumber(tfJarakHari));
+
     }
 
     @FXML
-    private void onOk() {
+    private void onOkCreate() {
         if (onOkFormContract != null) {
             onOkFormContract.onPositiveButtonClicked(getRule());
             return;
@@ -39,6 +44,7 @@ public class RuleForm implements Initializable {
     }
 
     public Rule getRule() {
+        Rule rule = new Rule();
         BRule bRule = new BRule();
         bRule.setIntervalDays(Integer.parseInt(tfJarakHari.getText()));
         bRule.setRuleName(tfNamaJenisRule.getText());

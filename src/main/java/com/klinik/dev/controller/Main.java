@@ -1,45 +1,49 @@
 package com.klinik.dev.controller;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
+import com.klinik.dev.MainMenu;
 import com.klinik.dev.Util;
-import com.klinik.dev.contract.PopulateFxWithThis;
-import com.klinik.dev.db.DB;
-import com.klinik.dev.db.model.Pasien;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import lombok.Data;
 import tray.notification.NotificationType;
 
+import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
  * Created by khairulimam on 26/01/17.
  */
 @Data
-public class Main implements Initializable, PopulateFxWithThis {
+public class Main implements Initializable {
 
-    private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
-    private ObservableList<Pasien> dataPasien;
     private Stage pasienStage, tindakanDanRuleStage;
 
-    //bullshit with the oo rules! ignore it for critical purpose!
-    PatientFormDialog patientFormDialog;
-
-    @FXML
-    private TblSemuaPasien semuaPasienController;
-    @FXML
-    private TblPasienCheckupHariIni pasienCheckupHariIniController;
-
-    public Main() throws SQLException {
+    public void initialize(URL location, ResourceBundle resources) {
+        pasienStage = makeDialogStage("/uis/patientdialog.fxml", "Tambah pasien", MainMenu.PRIMARY_STAGE);
+        tindakanDanRuleStage = makeDialogStage("/uis/tindakanruleformdialog.fxml", "Tambah rule dan tindakan", MainMenu.PRIMARY_STAGE);
     }
 
-    public void initialize(URL location, ResourceBundle resources) {
+    private Stage makeDialogStage(String fxml, String title, Stage owner) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+            AnchorPane pane = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(owner);
+            Scene scene = new Scene(pane);
+            stage.setScene(scene);
+            return stage;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @FXML
@@ -57,10 +61,5 @@ public class Main implements Initializable, PopulateFxWithThis {
     @FXML
     private void searchPatient() {
         Util.showNotif("Coba", "Coba pesan", NotificationType.WARNING);
-    }
-
-    @Override
-    public void populate(Object data) {
-        semuaPasienController.populateDataPasien((Pasien) data);
     }
 }

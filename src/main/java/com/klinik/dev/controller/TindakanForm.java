@@ -1,15 +1,18 @@
 package com.klinik.dev.controller;
 
+import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
 import com.klinik.dev.bussiness.BRule;
 import com.klinik.dev.bussiness.BTindakan;
 import com.klinik.dev.contract.OnOkFormContract;
-import com.klinik.dev.contract.PopulateFxWithThis;
+import com.klinik.dev.datastructure.SearchableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.events.EventBus;
+import com.klinik.dev.events.RuleEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -30,13 +33,7 @@ import java.util.ResourceBundle;
 public class TindakanForm implements Initializable {
 
     private OnOkFormContract onOkFormContract;
-    private Tindakan tindakan = new Tindakan();
-    private PopulateFxWithThis populateFxWithThis;
-    private PopulateFxWithThis populateCbTindakanInPatientForm;
     private List<BRule> bRules;
-
-//    bullshit with oo rule
-    private PatientForm patientFormController;
 
     private Dao<Rule, Integer> rules = DaoManager.createDao(DB.getDB(), Rule.class);
     private List<Rule> allRules = rules.queryForAll();
@@ -51,26 +48,38 @@ public class TindakanForm implements Initializable {
         this.bRules = getbRules();
         initLvRulesItems();
         this.lvRules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        EventBus.getInstance().register(this);
     }
 
-    public void addRuleToLvRules(BRule bRule) {
-        String displayFormat = String.format("%s (%d hari)", bRule.getRuleName(), bRule.getIntervalDays());
-        this.lvRules.getItems().add(displayFormat);
+    private String formatBRuleToString(BRule bRule) {
+        return String.format("%s (%d hari)", bRule.getRuleName(), bRule.getIntervalDays());
+    }
+
+    private void addRulesItem(BRule bRule) {
+        this.bRules.add(bRule);
+        this.lvRules.getItems().add(formatBRuleToString(bRule));
+    }
+
+    private void updateRulesItem(Rule rule) {
+        int indexOfUpdatedRule = SearchableCollections.binarySearch(allRules, rule);
+        if (indexOfUpdatedRule > -1) {
+            this.bRules.set(indexOfUpdatedRule, rule.getRule());
+            this.lvRules.getItems().set(indexOfUpdatedRule, formatBRuleToString(rule.getRule()));
+        }
+    }
+
+    private void deleteRulesItem(Rule rule) {
+        int index = SearchableCollections.binarySearch(allRules, rule);
+        if (index > -1) {
+            this.bRules.remove(index);
+            this.lvRules.getItems().remove(index);
+        }
     }
 
     private void initLvRulesItems() {
         for (BRule rule : this.bRules) {
-            addRuleToLvRules(rule);
+            this.lvRules.getItems().add(formatBRuleToString(rule));
         }
-    }
-
-    public void addItemTobRules(Object object) {
-        bRules.add((BRule) object);
-        notifyLvRule(object);
-    }
-
-    public void notifyLvRule(Object object) {
-        addRuleToLvRules((BRule) object);
     }
 
     private List<BRule> getbRules() {
@@ -85,21 +94,17 @@ public class TindakanForm implements Initializable {
     }
 
     @FXML
-    private void onOk() {
+    private void onOkCreate() {
         Tindakan tindakan = getTindakan();
-        BTindakan bTindakan = tindakan.getTindakan();
         if (onOkFormContract != null) {
             onOkFormContract.onPositiveButtonClicked(tindakan);
-            if (populateFxWithThis != null)
-                populateFxWithThis.populate(bTindakan);
-            if (patientFormController != null)
-                patientFormController.populateTindakanData(tindakan);
             return;
         }
         Log.w(getClass(), "Contract ain't implemented yet");
     }
 
     public Tindakan getTindakan() {
+        Tindakan tindakan = new Tindakan();
         BTindakan bTindakan = new BTindakan();
         bTindakan.setNamaTindakan(tfNamaTindakan.getText());
         bTindakan.setBRules(getSelectedRulesFromLvRules());
@@ -114,5 +119,20 @@ public class TindakanForm implements Initializable {
             bRules.add(this.bRules.get(i));
         }
         return bRules;
+    }
+
+    @Subscribe
+    public void onRule(RuleEvent ruleEvent) {
+        switch (ruleEvent.getOPERATION_TYPE()) {
+            case CREATE:
+                addRulesItem(ruleEvent.getRule().getRule());
+                break;
+            case UPDATE:
+                updateRulesItem(ruleEvent.getRule());
+                break;
+            case DELETE:
+                deleteRulesItem(ruleEvent.getRule());
+                break;
+        }
     }
 }

@@ -9,12 +9,10 @@ import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import tray.notification.NotificationType;
 import tray.notification.TrayNotification;
 
-import javax.tools.Tool;
 import java.sql.SQLException;
 
 /**
@@ -23,7 +21,8 @@ import java.sql.SQLException;
 public class Util {
     public static final String APP_NAME = "Klinik";
     public static final String DATE_PATTERN = "dd.MM.yyyy";
-    public static final String TABLE_CONTROL_TOOLTIP = "Pilih baris kemudian tekan:\n1. D/d untuk menghapus\n2. E/e untuk mengubah data";
+    public static final String TABLE_CONTROL_TOOLTIP = "Pilih baris kemudian tekan:\n1. D/d untuk menghapus\n2. E/e untuk mengubah data\n3. C/c untuk checkup";
+    public static final int MAX_TIME_ABSENCE = 2;
 
     public static Class[] classes = {Pasien.class, RiwayatTindakan.class, Rule.class, Tindakan.class};
 

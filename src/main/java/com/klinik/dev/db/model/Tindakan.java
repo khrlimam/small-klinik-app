@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.bussiness.BTindakan;
+import com.klinik.dev.contract.Searchable;
 import lombok.Data;
 
 /**
@@ -14,11 +15,16 @@ import lombok.Data;
 
 @DatabaseTable(tableName = "tindakan")
 @Data
-public class Tindakan {
+public class Tindakan implements Searchable {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private BTindakan tindakan;
     @ForeignCollectionField
     private ForeignCollection<RiwayatTindakan> riwayatTindakans;
+
+    @Override
+    public int getInt() {
+        return this.id;
+    }
 }

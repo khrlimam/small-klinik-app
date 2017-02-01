@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.klinik.dev.customui.NumberTextField?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0"
             prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.klinik.dev.controller.PatientForm">
@@ -40,7 +41,7 @@
                            GridPane.rowIndex="1"/>
                 <TextField fx:id="tfNamaPanggilan" prefHeight="25.0" prefWidth="287.0" GridPane.columnIndex="1"
                            GridPane.rowIndex="2"/>
-                <TextField fx:id="tfNoTelpon" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <NumberTextField fx:id="tfNoTelpon" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                 <TextField fx:id="tfPekerjaan" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
                 <ChoiceBox fx:id="cbAgama" prefHeight="25.0" prefWidth="305.0" GridPane.columnIndex="1"
                            GridPane.rowIndex="6"/>

@@ -2,10 +2,15 @@ package com.klinik.dev.controller;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.klinik.dev.Log;
 import com.klinik.dev.Util;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
+import com.klinik.dev.db.model.RiwayatTindakan;
+import com.klinik.dev.events.EventBus;
+import com.klinik.dev.events.OperationType;
+import com.klinik.dev.events.PasienEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import lombok.Data;
@@ -36,10 +41,16 @@ public class PatientFormDialog implements Initializable, OnOkFormContract {
     }
 
     public void onPositiveButtonClicked(Object object) {
+        Pasien pasien = (Pasien) object;
         try {
-            int created = pasienDao.create((Pasien) object);
-            if (created == 1)
+            int created = pasienDao.create(pasien);
+            RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
+            riwayatTindakan.setPasien(pasien);
+            riwayatTindakan.setTindakan(pasien.getTindakan());
+            if (created == 1) {
                 Util.showNotif("Sukses", "Berhasil menambahkan data", NotificationType.SUCCESS);
+                EventBus.getInstance().post(new PasienEvent(pasien, OperationType.CREATE));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

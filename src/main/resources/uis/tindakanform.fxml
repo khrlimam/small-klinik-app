@@ -51,7 +51,7 @@
                         <Insets bottom="10.0"/>
                     </VBox.margin>
                 </ListView>
-                <Button fx:id="btnOk" onAction="#onOk" mnemonicParsing="false" text="Ok"/>
+                <Button fx:id="btnOk" onAction="#onOkCreate" mnemonicParsing="false" text="Ok"/>
             </children>
         </VBox>
     </children>

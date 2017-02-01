@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.bussiness.BRule;
+import com.klinik.dev.contract.Searchable;
 import lombok.Data;
 
 /**
@@ -11,10 +12,14 @@ import lombok.Data;
  */
 @DatabaseTable(tableName = "rule")
 @Data
-public class Rule {
+public class Rule implements Searchable {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private BRule rule;
 
+    @Override
+    public int getInt() {
+        return this.id;
+    }
 }

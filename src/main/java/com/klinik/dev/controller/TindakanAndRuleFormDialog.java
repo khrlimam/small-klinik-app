@@ -7,6 +7,10 @@ import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.events.EventBus;
+import com.klinik.dev.events.OperationType;
+import com.klinik.dev.events.RuleEvent;
+import com.klinik.dev.events.TindakanEvent;
 import com.sun.istack.internal.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -58,9 +62,9 @@ public class TindakanAndRuleFormDialog implements Initializable {
             switch (metode) {
                 case SIMPAN_RULE:
                     try {
-                        create = ruleDao.create(data);
                         Rule rule = (Rule) data;
-                        tindakanFormController.addItemTobRules(rule.getRule());
+                        create = ruleDao.create(rule);
+                        EventBus.getInstance().post(new RuleEvent(rule, OperationType.CREATE));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
@@ -68,7 +72,9 @@ public class TindakanAndRuleFormDialog implements Initializable {
                     break;
                 case SIMPAN_TINDAKAN:
                     try {
-                        create = tindakanDao.create(data);
+                        Tindakan tindakan = (Tindakan) data;
+                        create = tindakanDao.create(tindakan);
+                        EventBus.getInstance().post(new TindakanEvent(tindakan, OperationType.CREATE));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
@@ -76,7 +82,7 @@ public class TindakanAndRuleFormDialog implements Initializable {
                     break;
             }
             if (create == 1)
-                Util.showNotif("Sukses", "Berhasil menanmbahkan data", NotificationType.INFORMATION);
+                Util.showNotif("Sukses", "Berhasil menanmbahkan data", NotificationType.SUCCESS);
         }
     }
 }

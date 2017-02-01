@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class RuleEvent {
     private Rule rule;
-    private OperationType OPERATION_TYPE;
+    private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
 
-    public RuleEvent(Rule rule, OperationType OPERATION_TYPE) {
+    public RuleEvent(Rule rule, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
         this.rule = rule;
         this.OPERATION_TYPE = OPERATION_TYPE;
     }

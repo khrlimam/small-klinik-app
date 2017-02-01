@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class TindakanEvent {
     private Tindakan tindakan;
-    private OperationType OPERATION_TYPE;
+    private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
 
-    public TindakanEvent(Tindakan tindakan, OperationType OPERATION_TYPE) {
+    public TindakanEvent(Tindakan tindakan, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
         this.tindakan = tindakan;
         this.OPERATION_TYPE = OPERATION_TYPE;
     }

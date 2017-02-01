@@ -1,9 +1,8 @@
 package com.klinik.dev.db.model;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.klinik.dev.contract.Searchable;
+import com.klinik.dev.contract.Comparable;
 import lombok.Data;
 
 /**
@@ -11,7 +10,7 @@ import lombok.Data;
  */
 @DatabaseTable(tableName = "riwayat_tindakan")
 @Data
-public class RiwayatTindakan implements Searchable {
+public class RiwayatTindakan implements Comparable {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -22,7 +21,7 @@ public class RiwayatTindakan implements Searchable {
     private boolean status;
 
     @Override
-    public int getInt() {
+    public int toBeCompared() {
         return this.id;
     }
 }

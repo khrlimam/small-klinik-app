@@ -6,13 +6,13 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
 import com.klinik.dev.Util;
 import com.klinik.dev.bussiness.BRule;
-import com.klinik.dev.datastructure.SearchableCollections;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.db.model.Tindakan;
 import com.klinik.dev.events.EventBus;
-import com.klinik.dev.events.OperationType;
+import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.PasienEvent;
 import com.klinik.dev.events.TindakanEvent;
 import javafx.collections.FXCollections;
@@ -90,7 +90,7 @@ public class TblPasienCheckupHariIni implements Initializable {
                 if (decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE)) {
                     int deleted = pasienDao.delete(selectedPasien);
                     if (deleted == 1) {
-                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OperationType.DELETE));
+                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.DELETE));
                         Util.showNotif("Berhasil", "Data telah dihapus", NotificationType.SUCCESS);
                     }
                 }
@@ -118,7 +118,7 @@ public class TblPasienCheckupHariIni implements Initializable {
                         newRiwayatTindakan.setTindakan(selectedTindakan);
                         newRiwayatTindakan.setPasien(selectedPasien);
                         riwayatTindakans.create(newRiwayatTindakan);
-                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OperationType.UPDATE));
+                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.UPDATE));
                     }
                 }
                 break;
@@ -146,16 +146,16 @@ public class TblPasienCheckupHariIni implements Initializable {
     public void onPasien(PasienEvent pasienEvent) {
         Pasien pasien = pasienEvent.getPasien();
         boolean isMust = isPasienMustCheckupHariIni(pasien);
-        int index = SearchableCollections.binarySearch(pasienhariIni, pasien);
+        int index = ComparableCollections.binarySearch(pasienhariIni, pasien);
         boolean pasienDitemukan = index > -1;
         if (isMust) {
             if (!pasienDitemukan) {
                 pasienhariIni.add(pasien);
                 tblPasien.getItems().add(pasien);
-            } else if (pasienDitemukan && pasienEvent.getOPERATION_TYPE() == OperationType.UPDATE) {
+            } else if (pasienDitemukan && pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.UPDATE) {
                 pasienhariIni.set(index, pasien);
                 tblPasien.getItems().set(index, pasien);
-            } else if (pasienDitemukan && pasienEvent.getOPERATION_TYPE() == OperationType.DELETE) {
+            } else if (pasienDitemukan && pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.DELETE) {
                 pasienhariIni.remove(index);
                 tblPasien.getItems().remove(index);
             }
@@ -174,12 +174,12 @@ public class TblPasienCheckupHariIni implements Initializable {
                 tindakanList.add(tindakan);
                 break;
             case UPDATE:
-                index = SearchableCollections.binarySearch(tindakanList, tindakan);
+                index = ComparableCollections.binarySearch(tindakanList, tindakan);
                 if (index > -1)
                     tindakanList.set(index, tindakan);
                 break;
             case DELETE:
-                index = SearchableCollections.binarySearch(tindakanList, tindakan);
+                index = ComparableCollections.binarySearch(tindakanList, tindakan);
                 if (index > -1)
                     tindakanList.remove(index);
                 break;

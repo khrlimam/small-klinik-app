@@ -7,7 +7,7 @@ import com.klinik.dev.Log;
 import com.klinik.dev.bussiness.BRule;
 import com.klinik.dev.bussiness.BTindakan;
 import com.klinik.dev.contract.OnOkFormContract;
-import com.klinik.dev.datastructure.SearchableCollections;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
@@ -61,7 +61,7 @@ public class TindakanForm implements Initializable {
     }
 
     private void updateRulesItem(Rule rule) {
-        int indexOfUpdatedRule = SearchableCollections.binarySearch(allRules, rule);
+        int indexOfUpdatedRule = ComparableCollections.binarySearch(allRules, rule);
         if (indexOfUpdatedRule > -1) {
             this.bRules.set(indexOfUpdatedRule, rule.getRule());
             this.lvRules.getItems().set(indexOfUpdatedRule, formatBRuleToString(rule.getRule()));
@@ -69,7 +69,7 @@ public class TindakanForm implements Initializable {
     }
 
     private void deleteRulesItem(Rule rule) {
-        int index = SearchableCollections.binarySearch(allRules, rule);
+        int index = ComparableCollections.binarySearch(allRules, rule);
         if (index > -1) {
             this.bRules.remove(index);
             this.lvRules.getItems().remove(index);

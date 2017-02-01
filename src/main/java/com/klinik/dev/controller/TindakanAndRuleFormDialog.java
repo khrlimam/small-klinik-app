@@ -8,7 +8,7 @@ import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
 import com.klinik.dev.events.EventBus;
-import com.klinik.dev.events.OperationType;
+import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.RuleEvent;
 import com.klinik.dev.events.TindakanEvent;
 import com.sun.istack.internal.Nullable;
@@ -64,7 +64,7 @@ public class TindakanAndRuleFormDialog implements Initializable {
                     try {
                         Rule rule = (Rule) data;
                         create = ruleDao.create(rule);
-                        EventBus.getInstance().post(new RuleEvent(rule, OperationType.CREATE));
+                        EventBus.getInstance().post(new RuleEvent(rule, OPERATION_TYPE.CREATE));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
@@ -74,7 +74,7 @@ public class TindakanAndRuleFormDialog implements Initializable {
                     try {
                         Tindakan tindakan = (Tindakan) data;
                         create = tindakanDao.create(tindakan);
-                        EventBus.getInstance().post(new TindakanEvent(tindakan, OperationType.CREATE));
+                        EventBus.getInstance().post(new TindakanEvent(tindakan, OPERATION_TYPE.CREATE));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);

@@ -5,14 +5,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.klinik.dev.Util;
 import com.klinik.dev.bussiness.BRule;
-import com.klinik.dev.bussiness.BTindakan;
-import com.klinik.dev.contract.Searchable;
-import javafx.beans.property.ObjectProperty;
+import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.enums.AGAMA;
+import com.klinik.dev.enums.STATUS;
 import lombok.Data;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ import java.util.List;
  */
 @DatabaseTable(tableName = "pasien")
 @Data
-public class Pasien implements Searchable {
+public class Pasien implements Comparable {
     @DatabaseField(generatedId = true, width = 4)
     private int noRekamMedis;
     @DatabaseField(width = 30)
@@ -53,12 +51,6 @@ public class Pasien implements Searchable {
         return checkupTerakhir.withTimeAtStartOfDay();
     }
 
-    public String getCheckupTerakhirToString() {
-        if (checkupTerakhir != null)
-            return checkupTerakhir.toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
-        return "";
-    }
-
     public Pasien getPasien() {
         return this;
     }
@@ -68,31 +60,14 @@ public class Pasien implements Searchable {
             return "";
         StringBuilder stringBuilder = new StringBuilder();
         List<BRule> bRules = tindakan.getTindakan().getBRules();
-        for (BRule bRule: bRules) {
-            stringBuilder.append(String.format("%s tgl %s\n", bRule.getRuleName(), bRule.toStringDate(checkupTerakhir)));
+        for (BRule bRule : bRules) {
+            stringBuilder.append(String.format("(%s) tgl %s\n", bRule.getRuleName(), bRule.toStringDate(checkupTerakhir)));
         }
         return stringBuilder.toString();
     }
 
     @Override
-    public int getInt() {
+    public int toBeCompared() {
         return this.noRekamMedis;
     }
-
-    public enum STATUS {
-        MENIKAH,
-        BELUM_MENIKAH
-    }
-
-    public enum AGAMA {
-        _,
-        ISLAM,
-        KRISTEN_PROTESTAN,
-        KRISTEN_KATOLIK,
-        HINDU,
-        BUDDHA,
-        KONGHUCU,
-        YAHUDI;
-    }
-
 }

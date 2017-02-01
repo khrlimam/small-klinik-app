@@ -6,11 +6,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
 import com.klinik.dev.Util;
 import com.klinik.dev.bussiness.BRule;
-import com.klinik.dev.datastructure.SearchableCollections;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -107,7 +108,7 @@ public class TblSemuaPasien implements Initializable {
                 if (isOK) {
                     int deleted = pasienDao.delete(selectedPasien);
                     if (deleted == 1) {
-                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OperationType.DELETE));
+                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.DELETE));
                         Util.showNotif("Berhasil", "Data telah dihapus", NotificationType.SUCCESS);
                     }
                 }
@@ -134,8 +135,8 @@ public class TblSemuaPasien implements Initializable {
                         newRiwayatTindakan.setTindakan(selectedTindakan);
                         newRiwayatTindakan.setPasien(selectedPasien);
                         riwayatTindakans.create(newRiwayatTindakan);
-                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OperationType.UPDATE));
-                        EventBus.getInstance().post(new RiwayatTindakanEvent(newRiwayatTindakan, OperationType.CREATE));
+                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.UPDATE));
+                        EventBus.getInstance().post(new RiwayatTindakanEvent(newRiwayatTindakan, OPERATION_TYPE.CREATE));
                         Util.showNotif("Sukses", "Data pasien telah disimpan", NotificationType.SUCCESS);
                     }
                 }
@@ -154,15 +155,15 @@ public class TblSemuaPasien implements Initializable {
     @Subscribe
     public void onPasien(PasienEvent pasienEvent) {
         Pasien pasien = pasienEvent.getPasien();
-        if (pasienEvent.getOPERATION_TYPE() == OperationType.CREATE) {
+        if (pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.CREATE) {
             this.pasiens.add(pasien);
             this.tblPasien.getItems().add(pasien);
-        } else if (pasienEvent.getOPERATION_TYPE() == OperationType.UPDATE) {
-            int index = SearchableCollections.binarySearch(pasiens, pasien);
+        } else if (pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.UPDATE) {
+            int index = ComparableCollections.binarySearch(pasiens, pasien);
             this.pasiens.set(index, pasien);
             this.tblPasien.getItems().set(index, pasien);
-        } else if (pasienEvent.getOPERATION_TYPE() == OperationType.DELETE) {
-            int index = SearchableCollections.binarySearch(pasiens, pasien);
+        } else if (pasienEvent.getOPERATION_TYPE() == OPERATION_TYPE.DELETE) {
+            int index = ComparableCollections.binarySearch(pasiens, pasien);
             this.pasiens.remove(index);
             this.tblPasien.getItems().remove(index);
         }
@@ -174,12 +175,12 @@ public class TblSemuaPasien implements Initializable {
         Tindakan tindakan = tindakanEvent.getTindakan();
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case UPDATE:
-                index = SearchableCollections.binarySearch(tindakanList, tindakan);
+                index = ComparableCollections.binarySearch(tindakanList, tindakan);
                 if (index > -1)
                     tindakanList.set(index, tindakan);
                 break;
             case DELETE:
-                index = SearchableCollections.binarySearch(tindakanList, tindakan);
+                index = ComparableCollections.binarySearch(tindakanList, tindakan);
                 if (index > -1)
                     tindakanList.remove(index);
                 break;

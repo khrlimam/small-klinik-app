@@ -6,7 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.bussiness.BTindakan;
-import com.klinik.dev.contract.Searchable;
+import com.klinik.dev.contract.Comparable;
 import lombok.Data;
 
 /**
@@ -15,7 +15,7 @@ import lombok.Data;
 
 @DatabaseTable(tableName = "tindakan")
 @Data
-public class Tindakan implements Searchable {
+public class Tindakan implements Comparable {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
@@ -24,7 +24,7 @@ public class Tindakan implements Searchable {
     private ForeignCollection<RiwayatTindakan> riwayatTindakans;
 
     @Override
-    public int getInt() {
+    public int toBeCompared() {
         return this.id;
     }
 }

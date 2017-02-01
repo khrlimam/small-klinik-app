@@ -7,10 +7,12 @@ import com.klinik.dev.Log;
 import com.klinik.dev.bussiness.BTindakan;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
-import com.klinik.dev.datastructure.SearchableCollections;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.enums.AGAMA;
+import com.klinik.dev.enums.STATUS;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.TindakanEvent;
 import javafx.collections.FXCollections;
@@ -23,8 +25,6 @@ import org.joda.time.DateTime;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -92,7 +92,7 @@ public class PatientForm implements Initializable {
 
     private ObservableList getListAgama() {
         ObservableList items = FXCollections.observableArrayList();
-        for (Pasien.AGAMA agama : Pasien.AGAMA.values()) {
+        for (AGAMA agama : AGAMA.values()) {
             items.add(agama);
         }
         return items;
@@ -112,11 +112,11 @@ public class PatientForm implements Initializable {
         return (RadioButton) this.rbStatusToggleGroup.getSelectedToggle();
     }
 
-    private Pasien.STATUS getSTatus() {
+    private STATUS getSTatus() {
         String id = getRbStatus().getId();
         if (id.equals(rbSudah.getId()))
-            return Pasien.STATUS.MENIKAH;
-        return Pasien.STATUS.BELUM_MENIKAH;
+            return STATUS.MENIKAH;
+        return STATUS.BELUM_MENIKAH;
     }
 
     @FXML
@@ -137,7 +137,7 @@ public class PatientForm implements Initializable {
         pasien.setNamaPanggilan(tfNamaPanggilan.getText());
         pasien.setNoTelepon(tfNoTelpon.getText());
         pasien.setPekerjaan(tfPekerjaan.getText());
-        pasien.setAgama((Pasien.AGAMA) cbAgama.getSelectionModel().getSelectedItem());
+        pasien.setAgama((AGAMA) cbAgama.getSelectionModel().getSelectedItem());
         pasien.setStatus(getSTatus());
         pasien.setAlamat(taAlamat.getText());
         pasien.setTglLahir(new DateTime(dtTglLahir.getValue().toString()));
@@ -156,14 +156,14 @@ public class PatientForm implements Initializable {
                 populateTindakanData(tindakan);
                 break;
             case DELETE:
-                index = SearchableCollections.binarySearch(tindakanList, tindakan);
+                index = ComparableCollections.binarySearch(tindakanList, tindakan);
                 if (index > -1) {
                     tindakanList.remove(index);
                     cbTindakan.getItems().remove(index);
                 }
                 break;
             case UPDATE:
-                index = SearchableCollections.binarySearch(tindakanList, tindakan);
+                index = ComparableCollections.binarySearch(tindakanList, tindakan);
                 if (index > -1) {
                     tindakanList.set(index, tindakan);
                     cbTindakan.getItems().set(index, tindakan);

@@ -31,8 +31,6 @@
                         <Button fx:id="btnTambahTindakanDanRule" mnemonicParsing="false"
                                 onAction="#showFormTambahTindakanDanRule" text="Tambah Tindakan Dan Rule"/>
                         <Pane HBox.hgrow="ALWAYS"/>
-                        <TextField fx:id="tfSearch" onAction="#searchPatient" promptText="Nama, NO RM"/>
-                        <Button mnemonicParsing="false" onAction="#searchPatient" text="Cari"/>
                     </items>
                 </ToolBar>
                 <Pane/>

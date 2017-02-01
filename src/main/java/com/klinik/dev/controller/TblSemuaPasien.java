@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.Log;
 import com.klinik.dev.MainMenu;
 import com.klinik.dev.Util;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
@@ -115,10 +116,7 @@ public class TblSemuaPasien implements Initializable {
             pasienFilteredList.setPredicate(pasien -> {
                 if (newValue == null || newValue.isEmpty())
                     return true;
-                int getNoRekamMedis = -1;
-                if (newValue.toLowerCase().matches("[0-9]*"))
-                    getNoRekamMedis = Integer.parseInt(newValue);
-                if (getNoRekamMedis != -1 && pasien.getNoRekamMedis() == getNoRekamMedis)
+                if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
                     return true;
                 else if (pasien.getNama().toLowerCase().contains(newValue.toLowerCase()))
                     return true;
@@ -136,7 +134,7 @@ public class TblSemuaPasien implements Initializable {
 
     public void onKeyPressed(KeyEvent keyEvent) throws SQLException, IOException {
         Optional<ButtonType> decision;
-        Pasien selectedPasien = listPasiens.get(tblPasien.getSelectionModel().getSelectedIndex());
+        Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
         switch (keyEvent.getCode()) {
             case R:
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/uis/rekammedisdialog.fxml"));

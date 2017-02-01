@@ -14,8 +14,12 @@ import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
 import com.klinik.dev.events.TindakanEvent;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -60,7 +64,7 @@ public class TblPasienCheckupHariIni implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
         jadwalPasienHariIni(pasiens);
-        tblPasien.setItems(pasienHariIni);
+        tblPasien.setItems(getPasienHariIniSortedList());
         setUpTableColumnItems();
     }
 
@@ -80,7 +84,7 @@ public class TblPasienCheckupHariIni implements Initializable {
 
     public void overrideItems(List<Pasien> pasiens) {
         jadwalPasienHariIni(pasiens);
-        tblPasien.setItems(pasienHariIni);
+        tblPasien.setItems(getPasienHariIniSortedList());
     }
 
     private void setUpTableColumnItems() {
@@ -141,6 +145,26 @@ public class TblPasienCheckupHariIni implements Initializable {
             }
         }
         return false;
+    }
+
+    private SortedList<Pasien> getPasienHariIniSortedList() {
+        FilteredList<Pasien> pasienFilteredList = new FilteredList<Pasien>(pasienHariIni, pasien -> true);
+        tfFilterTable.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldvalue, String newValue) {
+                pasienFilteredList.setPredicate((Pasien pasien) -> {
+                    if (newValue == null || newValue.isEmpty())
+                        return true;
+                    if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
+                        return true;
+                    else if (pasien.getNama().toLowerCase().contains(newValue.toLowerCase()))
+                        return true;
+                    return false;
+                });
+            }
+        });
+        SortedList<Pasien> pasienSortedList = new SortedList<>(pasienFilteredList);
+        return pasienSortedList;
     }
 
     private List<String> getListTindakanString() {

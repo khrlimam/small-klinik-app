@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -59,6 +60,8 @@ public class TblSemuaPasien implements Initializable {
     @FXML
     private DatePicker dpFilterTable;
     @FXML
+    TextField tfFilterTable;
+    @FXML
     private TableView<Pasien> tblPasien;
     @FXML
     private TableColumn<Pasien, String> noRmColumn, namaColumn, tindakanColumn, diagnosisColumn;
@@ -72,27 +75,30 @@ public class TblSemuaPasien implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         com.klinik.dev.events.EventBus.getInstance().register(this);
         tblPasien.setEditable(true);
-        tblPasien.setItems(sortedListFromDatePicker());
+        tblPasien.setItems(sortedListFromTextField());
         tblPasien.setTooltip(Util.tableControlTooltip());
         StringConverter<LocalDate> dpFilterConverter = new StringConverter<LocalDate>() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Util.DATE_PATTERN);
 
             @Override
             public String toString(LocalDate object) {
-                if (object != null)
+                if (object != null) {
                     return formatter.format(object);
+                }
                 return "";
             }
 
             @Override
             public LocalDate fromString(String string) {
                 if (string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string, formatter);
+                    return LocalDate.parse(string);
                 }
                 return null;
             }
         };
         dpFilterTable.setConverter(dpFilterConverter);
+        dpFilterTable.getEditor().setDisable(true);
+        dpFilterTable.getEditor().setStyle("visibility: hidden;");
         jadwalCheckupColumn.setCellFactory(column -> {
             return new TableCell<Pasien, Pasien>() {
                 @Override
@@ -140,9 +146,9 @@ public class TblSemuaPasien implements Initializable {
         });
     }
 
-    private SortedList<Pasien> sortedListFromDatePicker() {
+    private SortedList<Pasien> sortedListFromTextField() {
         FilteredList<Pasien> pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
-        dpFilterTable.getEditor().textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
+        tfFilterTable.textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
             if (newValue == null || newValue.isEmpty())
                 return true;
             if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
@@ -159,7 +165,7 @@ public class TblSemuaPasien implements Initializable {
 
     public void overrideItems(List<Pasien> pasiens) {
         listPasiens = FXCollections.observableArrayList(pasiens);
-        tblPasien.setItems(sortedListFromDatePicker());
+        tblPasien.setItems(sortedListFromTextField());
     }
 
     public void onKeyPressed(KeyEvent keyEvent) throws SQLException, IOException {
@@ -262,5 +268,9 @@ public class TblSemuaPasien implements Initializable {
                 Util.showNotif("Berhasil", "Data telah dihapus", NotificationType.SUCCESS);
             }
         }
+    }
+
+    public void filterByDate() {
+        tfFilterTable.setText(dpFilterTable.getEditor().getText());
     }
 }

@@ -3,8 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -13,11 +15,13 @@
     <children>
         <HBox>
             <children>
-                <DatePicker fx:id="dpFilterTable" prefHeight="25.0" prefWidth="250.0" promptText="Cari nama, NO RM, jadwal checkup">
-                    <HBox.margin>
-                        <Insets left="3.0" />
-                    </HBox.margin>
-                </DatePicker>
+            <Label prefHeight="25.0" prefWidth="38.0" text="Filter: " />
+            <TextField fx:id="tfFilterTable" prefHeight="25.0" prefWidth="202.0" promptText="NO RM, Nama">
+               <HBox.margin>
+                  <Insets right="3.0" />
+               </HBox.margin>
+            </TextField>
+                <DatePicker fx:id="dpFilterTable" minWidth="18.0" onAction="#filterByDate" prefHeight="25.0" prefWidth="27.0" promptText="Cari nama, NO RM, jadwal checkup" />
                 <Pane prefWidth="200.0" HBox.hgrow="ALWAYS" />
                 <Button mnemonicParsing="false" onAction="#showPatient" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #1abc9c;" text="(S) Show" textFill="WHITE">
                     <HBox.margin>

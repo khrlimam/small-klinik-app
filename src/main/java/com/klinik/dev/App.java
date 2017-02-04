@@ -4,6 +4,7 @@ package com.klinik.dev;
  * Created by khairulimam on 26/01/17.
  */
 
+import com.j256.ormlite.table.TableUtils;
 import com.klinik.dev.util.Util;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +30,7 @@ public class App extends Application {
         this.PRIMARY_STAGE = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource(MAIN_UI));
         primaryStage.setTitle(Util.APP_NAME);
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 }

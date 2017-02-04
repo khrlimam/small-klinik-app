@@ -1,33 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<VBox prefHeight="479.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.klinik.dev.controller.TblSemuaPasien">
+
+<VBox prefHeight="479.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.klinik.dev.controller.TblSemuaPasien">
     <children>
-        <Group>
+        <HBox>
             <children>
-                <TextField fx:id="tfFilterTable" layoutX="81.0" layoutY="21.0" prefHeight="25.0" prefWidth="219.0"
-                           promptText="Cari ..."/>
-                <Label layoutX="14.0" layoutY="26.0" text="Filter data:"/>
+                <DatePicker fx:id="dpFilterTable" prefHeight="25.0" prefWidth="250.0" promptText="Cari nama, NO RM, jadwal checkup">
+                    <HBox.margin>
+                        <Insets left="3.0" />
+                    </HBox.margin>
+                </DatePicker>
+                <Pane prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#showPatient" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #1abc9c;" text="(S) Show" textFill="WHITE">
+                    <HBox.margin>
+                        <Insets right="3.0" />
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#checkupPatient" prefHeight="25.0" prefWidth="110.0" style="-fx-background-color: #2980b9;" text="(C) Checkup" textFill="WHITE">
+                    <HBox.margin>
+                        <Insets right="3.0" />
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#deletePatient" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #e74c3c;" text="(D) Delete" textFill="WHITE">
+                    <HBox.margin>
+                        <Insets right="3.0" />
+                    </HBox.margin>
+                </Button>
             </children>
-        </Group>
+        </HBox>
         <TableView fx:id="tblPasien" onKeyPressed="#onKeyPressed" prefHeight="440.0" prefWidth="780.0">
             <columns>
-                <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="noRmColumn" prefWidth="75.0" text="NO RM"/>
-                <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="namaColumn" prefWidth="200.0" text="Nama"/>
-                <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="noTelponColumn" prefWidth="150.0" text="No Telepon"/>
-                <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="alamatColumn" prefWidth="300.0" text="Alamat"/>
-                <TableColumn style="-fx-alignment: CENTER_LEFT;" fx:id="jadwalCheckupColumn" prefWidth="500.0" text="Jadwal Checkup"/>
+                <TableColumn fx:id="noRmColumn" prefWidth="75.0" style="-fx-alignment: CENTER_LEFT; -fx-font-size: 14px;" text="NO RM" />
+                <TableColumn fx:id="namaColumn" prefWidth="200.0" style="-fx-alignment: CENTER_LEFT; -fx-font-size: 14px;" text="Nama" />
+                <TableColumn fx:id="tindakanColumn" prefWidth="150.0" style="-fx-alignment: CENTER_LEFT; -fx-font-size: 14px;" text="Tindakan" />
+                <TableColumn fx:id="diagnosisColumn" prefWidth="250.0" style="-fx-alignment: CENTER_LEFT; -fx-font-size: 14px;" text="Diagnosis" />
+                <TableColumn fx:id="jadwalCheckupColumn" prefWidth="500.0" style="-fx-alignment: CENTER_LEFT; -fx-font-size: 14px;" text="Jadwal Checkup" />
             </columns>
             <VBox.margin>
-                <Insets top="10.0"/>
+                <Insets top="10.0" />
             </VBox.margin>
         </TableView>
     </children>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </VBox>

@@ -33,7 +33,7 @@
                         <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="tfNamaJenisRule" promptText="Nama bRule">
+                <TextField fx:id="tfNamaJenisRule" promptText="Nama rule">
                     <VBox.margin>
                         <Insets bottom="10.0"/>
                     </VBox.margin>

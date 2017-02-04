@@ -3,12 +3,12 @@ package com.klinik.dev.controller;
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.klinik.dev.bussiness.Rules;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.db.model.TindakanRule;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RuleEvent;
@@ -41,6 +41,7 @@ public class TindakanForm implements Initializable {
 
     private Dao<Rule, Integer> ruleDao = DaoManager.createDao(DB.getDB(), Rule.class);
     private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
+    private Dao<TindakanRule, Void> tindakanRuleDao = DaoManager.createDao(DB.getDB(), TindakanRule.class);
 
     private ObservableList<Rule> ruleLists = FXCollections.observableArrayList(ruleDao.queryForAll());
 
@@ -76,9 +77,8 @@ public class TindakanForm implements Initializable {
 
     @FXML
     private void onOkCreate() {
-        Tindakan tindakan = getTindakan();
         if (onOkFormContract != null) {
-            onOkFormContract.onPositive(tindakan);
+            onOkFormContract.onPositive();
             return;
         }
         Log.w(getClass(), "Contract ain't implemented yet");
@@ -87,16 +87,13 @@ public class TindakanForm implements Initializable {
     public Tindakan getTindakan() {
         Tindakan tindakan = new Tindakan();
         tindakan.setNamaTindakan(tfNamaTindakan.getText());
-        tindakan.setRules(new Rules(getSelectedRulesFromLvRules()));
         return tindakan;
     }
 
-    private List<Rule> getSelectedRulesFromLvRules() {
+    public List<Rule> getSelectedRulesFromLvRules() {
         List<Rule> rules = new ArrayList<>();
         List<Integer> selectedIndices = lvRules.getSelectionModel().getSelectedIndices();
-        for (Integer i : selectedIndices) {
-            rules.add(this.ruleLists.get(i));
-        }
+        selectedIndices.forEach(index -> rules.add(ruleLists.get(index)));
         return rules;
     }
 

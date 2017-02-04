@@ -3,3 +3,4 @@ target/
 *.log 
 klinikDB/
 derby.log
+/src/main/resources/foto

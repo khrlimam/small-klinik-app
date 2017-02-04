@@ -6,7 +6,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
-import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Created by khairulimam on 29/01/17.
@@ -68,17 +68,10 @@ public class TblPasienCheckupHariIni implements Initializable {
     }
 
     private void jadwalPasienHariIni(List<Pasien> pasiens) {
-        pasienHariIni = FXCollections.observableArrayList();
-        for (Pasien p : pasiens) {
-            if (p.getTindakan() != null)
-                for (Rule rule : p.getTindakan().getRules().getRules()) {
-                    if (rule != null)
-                        if (rule.isTodayCheckup(p.getCheckupTerakhir())) {
-                            this.pasienHariIni.add(p);
-                            break;
-                        }
-                }
-        }
+        List<Pasien> pasienList = pasiens.stream()
+                .filter(this::isPasienMustCheckupHariIni)
+                .collect(Collectors.toList());
+        pasienHariIni = FXCollections.observableArrayList(pasienList);
     }
 
     public void overrideItems(List<Pasien> pasiens) {
@@ -133,12 +126,9 @@ public class TblPasienCheckupHariIni implements Initializable {
     }
 
     private boolean isPasienMustCheckupHariIni(Pasien selectedPasien) {
-        for (Rule rule : selectedPasien.getTindakan().getRules().getRules()) {
-            if (rule.isTodayCheckup(selectedPasien.getCheckupTerakhir())) {
-                return true;
-            }
-        }
-        return false;
+        return selectedPasien.getTindakan().getTindakanrules().stream()
+                .anyMatch(tindakanRule -> tindakanRule.getRule() != null && tindakanRule.getRule()
+                        .isTodayCheckup(selectedPasien.getCheckupTerakhir()));
     }
 
     private SortedList<Pasien> getPasienHariIniSortedList() {

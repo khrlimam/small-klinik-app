@@ -6,12 +6,15 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
-import com.klinik.dev.enums.AGAMA;
 import com.klinik.dev.enums.STATUS;
+import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
 
-import java.util.List;
+import java.time.Month;
+import java.time.Year;
 
 /**
  * Created by khairulimam on 23/01/17.
@@ -23,8 +26,6 @@ public class Pasien implements Comparable {
     private int noRekamMedis;
     @DatabaseField(width = 30)
     private String nama;
-    @DatabaseField(width = 10)
-    private String namaPanggilan;
     @DatabaseField(dataType = DataType.DATE_TIME)
     private DateTime tglLahir;
     @DatabaseField
@@ -35,12 +36,14 @@ public class Pasien implements Comparable {
     private String noTelepon;
     @DatabaseField(width = 20)
     private String pekerjaan;
-    @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "_", width = 30)
-    private AGAMA agama;
     @DatabaseField(dataType = DataType.DATE_TIME)
     private DateTime tglRegister;
     @DatabaseField(dataType = DataType.DATE_TIME)
     private DateTime checkupTerakhir;
+    @DatabaseField
+    private String diagnosis;
+    @DatabaseField
+    private String fotoPath;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
     private Tindakan tindakan;
     @ForeignCollectionField
@@ -48,6 +51,10 @@ public class Pasien implements Comparable {
 
     public DateTime getCheckupTerakhir() {
         return checkupTerakhir.withTimeAtStartOfDay();
+    }
+
+    public String getTglRegisterToString() {
+        return this.tglRegister.toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
     }
 
     public DateTime getCheckupTerakhirActualDate() {
@@ -62,10 +69,8 @@ public class Pasien implements Comparable {
         if (tindakan == null)
             return "";
         StringBuilder stringBuilder = new StringBuilder();
-        List<Rule> rules = tindakan.getRules().getRules();
-        for (Rule rule : rules) {
-            stringBuilder.append(String.format("(%s) tgl %s\n", rule.getRuleName(), rule.toStringDate(checkupTerakhir)));
-        }
+        ForeignCollection<TindakanRule> rules = tindakan.getTindakanrules();
+        rules.forEach(tindakanRule -> stringBuilder.append(String.format("%s, %s\n", tindakanRule.getRule().getRuleName(), tindakanRule.getRule().toStringDate(checkupTerakhir))));
         return stringBuilder.toString();
     }
 

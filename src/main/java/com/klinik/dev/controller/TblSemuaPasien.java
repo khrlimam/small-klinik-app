@@ -4,24 +4,20 @@ import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.App;
-import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
-import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.db.model.TindakanRule;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
-import com.klinik.dev.events.RiwayatTindakanEvent;
 import com.klinik.dev.events.TindakanEvent;
 import com.klinik.dev.util.Util;
-import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,14 +30,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import lombok.Data;
-import org.joda.time.DateTime;
 import tray.notification.NotificationType;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -50,7 +47,7 @@ import java.util.ResourceBundle;
  * Created by khairulimam on 29/01/17.
  */
 @Data
-public class TblSemuaPasien implements Initializable, OnOkFormContract {
+public class TblSemuaPasien implements Initializable {
 
     private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
     private Dao<Tindakan, Integer> tindakans = DaoManager.createDao(DB.getDB(), Tindakan.class);
@@ -59,13 +56,12 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
     private List<Tindakan> tindakanList = tindakans.queryForAll();
     private ObservableList<Pasien> listPasiens = FXCollections.observableArrayList(pasienDao.queryForAll());
 
-
     @FXML
-    private TextField tfFilterTable;
+    private DatePicker dpFilterTable;
     @FXML
     private TableView<Pasien> tblPasien;
     @FXML
-    private TableColumn<Pasien, String> noRmColumn, namaColumn, noTelponColumn, alamatColumn;
+    private TableColumn<Pasien, String> noRmColumn, namaColumn, tindakanColumn, diagnosisColumn;
     @FXML
     private TableColumn<Pasien, Pasien> jadwalCheckupColumn;
 
@@ -76,8 +72,27 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
     public void initialize(URL location, ResourceBundle resources) {
         com.klinik.dev.events.EventBus.getInstance().register(this);
         tblPasien.setEditable(true);
-        tblPasien.setItems(getPasiensSortedList());
+        tblPasien.setItems(sortedListFromDatePicker());
         tblPasien.setTooltip(Util.tableControlTooltip());
+        StringConverter<LocalDate> dpFilterConverter = new StringConverter<LocalDate>() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Util.DATE_PATTERN);
+
+            @Override
+            public String toString(LocalDate object) {
+                if (object != null)
+                    return formatter.format(object);
+                return "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, formatter);
+                }
+                return null;
+            }
+        };
+        dpFilterTable.setConverter(dpFilterConverter);
         jadwalCheckupColumn.setCellFactory(column -> {
             return new TableCell<Pasien, Pasien>() {
                 @Override
@@ -89,8 +104,8 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
                     } else {
                         // Format date.
                         setText(item.getJadwalSelanjutnya());
-                        for (Rule rule : item.getTindakan().getRules().getRules()) {
-                            if (rule.isMoreThanPeriod(item.getCheckupTerakhir())) {
+                        for (TindakanRule tindakanRule : item.getTindakan().getTindakanrules()) {
+                            if (tindakanRule.getRule().isMoreThanPeriod(item.getCheckupTerakhir())) {
                                 setTextFill(Paint.valueOf("#ecf0f1"));
                                 setStyle("-fx-background-color: #e74c3c");
                                 break;
@@ -108,139 +123,57 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
     private void setUpTableColumnItems() {
         noRmColumn.setCellValueFactory(new PropertyValueFactory<>("noRekamMedis"));
         namaColumn.setCellValueFactory(new PropertyValueFactory<>("nama"));
-        noTelponColumn.setCellValueFactory(new PropertyValueFactory<>("noTelepon"));
-        alamatColumn.setCellValueFactory(new PropertyValueFactory<>("alamat"));
+        tindakanColumn.setCellValueFactory(new PropertyValueFactory<>("tindakan"));
         jadwalCheckupColumn.setCellValueFactory(new PropertyValueFactory<>("pasien"));
-
+        diagnosisColumn.setCellValueFactory(new PropertyValueFactory<>("diagnosis"));
         namaColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        noTelponColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        alamatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
-        namaColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Pasien, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Pasien, String> t) {
-                Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
-                p.setNama(t.getNewValue());
-                try {
-                    pasienDao.update(p);
-                    EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        noTelponColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Pasien, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Pasien, String> t) {
-                Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
-                p.setNoTelepon(t.getNewValue());
-                try {
-                    pasienDao.update(p);
-                    EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        alamatColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Pasien, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Pasien, String> t) {
-                Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
-                p.setAlamat(t.getNewValue());
-                try {
-                    pasienDao.update(p);
-                    EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        namaColumn.setOnEditCommit(t -> {
+            Pasien p = t.getTableView().getSelectionModel().getSelectedItem();
+            p.setNama(t.getNewValue());
+            try {
+                pasienDao.update(p);
+                EventBus.getInstance().post(new PasienEvent(p, OPERATION_TYPE.UPDATE));
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         });
     }
 
-    private SortedList<Pasien> getPasiensSortedList() {
-        FilteredList<Pasien> pasienFilteredList = new FilteredList<Pasien>(listPasiens, pasien -> true);
-        tfFilterTable.textProperty().addListener((observable, oldValue, newValue) -> {
-            pasienFilteredList.setPredicate(pasien -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-                if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
-                    return true;
-                else if (pasien.getNama().toLowerCase().contains(newValue.toLowerCase()))
-                    return true;
-                return false;
-            });
-        });
+    private SortedList<Pasien> sortedListFromDatePicker() {
+        FilteredList<Pasien> pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
+        dpFilterTable.getEditor().textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
+            if (newValue == null || newValue.isEmpty())
+                return true;
+            if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
+                return true;
+            else if (pasien.getNama().toLowerCase().contains(newValue.toLowerCase()))
+                return true;
+            else if (pasien.getJadwalSelanjutnya().contains(newValue))
+                return true;
+            return false;
+        }));
         SortedList<Pasien> pasienSortedList = new SortedList<>(pasienFilteredList);
         return pasienSortedList;
     }
 
     public void overrideItems(List<Pasien> pasiens) {
         listPasiens = FXCollections.observableArrayList(pasiens);
-        tblPasien.setItems(getPasiensSortedList());
+        tblPasien.setItems(sortedListFromDatePicker());
     }
 
     public void onKeyPressed(KeyEvent keyEvent) throws SQLException, IOException {
-        Optional<ButtonType> decision;
-        Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
         switch (keyEvent.getCode()) {
-            case R:
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/uis/rekammedisdialog.fxml"));
-                AnchorPane pane = loader.load();
-                RekamMedisDialog rekamMedisDialog = loader.getController();
-                pasienDao.refresh(selectedPasien);
-                rekamMedisDialog.setLvMedicalRecordItems(selectedPasien.getRiwayatTindakans());
-                rekamMedisDialog.getLblPatientname().setText(selectedPasien.getNama());
-                Stage stage = new Stage();
-                stage.setTitle(String.format("Riwayat Medis %s", selectedPasien.getNamaPanggilan()));
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(App.PRIMARY_STAGE);
-                Scene scene = new Scene(pane);
-                stage.setScene(scene);
-                stage.showAndWait();
+            case S:
+                showPatient();
                 break;
             case D:
-                decision = Util.deleteConfirmation().showAndWait();
-                boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
-                if (isOK) {
-                    int deleted = pasienDao.delete(selectedPasien);
-                    if (deleted == 1) {
-                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.DELETE));
-                        Util.showNotif("Berhasil", "Data telah dihapus", NotificationType.SUCCESS);
-                    }
-                }
+                deletePatient();
                 return;
             case C:
-                ChoiceDialog<String> tindakanChoiceDialog = new ChoiceDialog<>(null, getListTindakanString());
-                tindakanChoiceDialog.setHeaderText("Pilih tindakan");
-                tindakanChoiceDialog.setTitle(String.format("Checkup %s", tblPasien.getSelectionModel().getSelectedItem().getNama()));
-                Optional<String> selected = tindakanChoiceDialog.showAndWait();
-                if (selected.isPresent()) {
-                    String selectedChoice = selected.get();
-                    int selectedIndex = Integer.parseInt(selectedChoice.split("\\.")[0]) - 1;
-                    Tindakan selectedTindakan = tindakanList.get(selectedIndex);
-                    selectedPasien.setTindakan(selectedTindakan);
-                    selectedPasien.setCheckupTerakhir(DateTime.now());
-                    int updated = pasienDao.update(selectedPasien);
-                    if (updated == 1) {
-                        RiwayatTindakan newRiwayatTindakan = new RiwayatTindakan();
-                        newRiwayatTindakan.setTindakan(selectedTindakan);
-                        newRiwayatTindakan.setPasien(selectedPasien);
-                        riwayatTindakans.create(newRiwayatTindakan);
-                        EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.UPDATE));
-                        EventBus.getInstance().post(new RiwayatTindakanEvent(newRiwayatTindakan, OPERATION_TYPE.CREATE));
-                        Util.showNotif("Sukses", "Data pasien telah disimpan", NotificationType.SUCCESS);
-                    }
-                }
+                checkupPatient();
                 break;
         }
-    }
-
-    private List<String> getListTindakanString() {
-        List<String> l = new ArrayList<>();
-        int index = 0;
-        for (Tindakan tindakan : tindakanList)
-            l.add(String.format("%d. %s", ++index, tindakan.getNamaTindakan()));
-        return l;
     }
 
     @Subscribe
@@ -271,8 +204,63 @@ public class TblSemuaPasien implements Initializable, OnOkFormContract {
         }
     }
 
-    @Override
-    public void onPositive(@Nullable Object data) {
+    public void showPatient() throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/uis/showpatient.fxml"));
+        Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
+        AnchorPane pane = loader.load();
+        ShowPatient showPatient = loader.getController();
+        pasienDao.refresh(selectedPasien);
+        showPatient.reinitialize(selectedPasien);
+        Stage stage = new Stage();
+        stage.setTitle("Detail Pasien");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(App.PRIMARY_STAGE);
+        Scene scene = new Scene(pane);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 
+    public void checkupPatient() throws IOException {
+        Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
+        FXMLLoader checkupdialog = new FXMLLoader(getClass().getResource("/uis/checkupdialog.fxml"));
+        AnchorPane checkdialogpane = checkupdialog.load();
+        CheckupDialog checkupDialogController = checkupdialog.getController();
+        checkupDialogController.setOnOkFormContract(() -> {
+            try {
+                Tindakan tindakan = checkupDialogController.getTindakan();
+                selectedPasien.setTindakan(tindakan);
+                RiwayatTindakan riwayatTindakan = checkupDialogController.getRiwayatTindakan();
+                selectedPasien.setDiagnosis(riwayatTindakan.getDiagnosis());
+                riwayatTindakan.setTindakan(tindakan);
+                riwayatTindakan.setPasien(selectedPasien);
+                pasienDao.update(selectedPasien);
+                riwayatTindakans.create(riwayatTindakan);
+                EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.UPDATE));
+                Util.showNotif("Sukses", "Data pasien telah disimpan", NotificationType.SUCCESS);
+            } catch (SQLException e) {
+                Util.showNotif("Error", "Ada kesalahan", NotificationType.ERROR);
+                e.printStackTrace();
+            }
+        });
+        Stage checkupstage = new Stage();
+        checkupstage.setTitle("Checkup Pasien");
+        checkupstage.initModality(Modality.WINDOW_MODAL);
+        checkupstage.initOwner(App.PRIMARY_STAGE);
+        Scene checkupscene = new Scene(checkdialogpane);
+        checkupstage.setScene(checkupscene);
+        checkupstage.showAndWait();
+    }
+
+    public void deletePatient() throws SQLException {
+        Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
+        Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
+        boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
+        if (isOK) {
+            int deleted = pasienDao.delete(selectedPasien);
+            if (deleted == 1) {
+                EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.DELETE));
+                Util.showNotif("Berhasil", "Data telah dihapus", NotificationType.SUCCESS);
+            }
+        }
     }
 }

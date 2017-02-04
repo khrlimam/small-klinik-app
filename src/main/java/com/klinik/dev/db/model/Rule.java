@@ -1,6 +1,8 @@
 package com.klinik.dev.db.model;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
 import com.klinik.dev.util.Util;
@@ -23,8 +25,8 @@ public class Rule implements Comparable, Serializable {
     private String ruleName;
     @DatabaseField
     private int intervalDays;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Tindakan tindakan;
+    @ForeignCollectionField
+    private ForeignCollection<TindakanRule> tindakanRules;
 
     public DateTime getNextCheckUp(DateTime lastCheckup) {
         return lastCheckup.plusDays(this.intervalDays);

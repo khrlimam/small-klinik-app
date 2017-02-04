@@ -3,10 +3,7 @@ package com.klinik.dev.util;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.klinik.dev.db.DB;
-import com.klinik.dev.db.model.Pasien;
-import com.klinik.dev.db.model.RiwayatTindakan;
-import com.klinik.dev.db.model.Rule;
-import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.db.model.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
@@ -24,7 +21,7 @@ public class Util {
     public static final String TABLE_CONTROL_TOOLTIP = "Pilih baris kemudian tekan:\n1. D/d untuk menghapus\n2. Double klik pada cell untuk mengubah data\n3. C/c untuk checkup\n4. R/r untuk melihat riwayat medis";
     public static final int MAX_TIME_ABSENCE = 2;
 
-    public static Class[] classes = {Pasien.class, RiwayatTindakan.class, Rule.class, Tindakan.class};
+    public static Class[] classes = {Pasien.class, RiwayatTindakan.class, Rule.class, Tindakan.class, TindakanRule.class};
 
     public static void showNotif(String title, String message, NotificationType type) {
         TrayNotification tray = new TrayNotification(title, message, type);

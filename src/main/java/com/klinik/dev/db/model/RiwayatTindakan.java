@@ -3,6 +3,7 @@ package com.klinik.dev.db.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.util.Util;
 import lombok.Data;
 
 /**
@@ -18,13 +19,19 @@ public class RiwayatTindakan implements Comparable {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Tindakan tindakan;
     @DatabaseField
-    private boolean status;
+    private String diagnosis;
+    @DatabaseField
+    private int tarif;
 
     @Override
     public String toString() {
         String tgl = pasien.getCheckupTerakhirActualDate().toString("dd.MM.yyyy");
         String jam = pasien.getCheckupTerakhirActualDate().toString("HH:mm:ss");
         return String.format("Melakukan %s pada tgl %s jam %s", tindakan.getNamaTindakan(), tgl, jam);
+    }
+
+    public String getTanggal() {
+        return pasien.getCheckupTerakhirActualDate().toString(Util.DATE_PATTERN);
     }
 
     @Override

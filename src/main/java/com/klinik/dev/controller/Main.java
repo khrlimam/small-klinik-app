@@ -34,17 +34,13 @@ public class Main implements Initializable {
 
     @FXML
     private TblSemuaPasien tblSemuaPasienController;
-    @FXML
-    private TblPasienCheckupHariIni tblPasienCheckupHariIniController;
 
-    public Main() throws SQLException {}
+    public Main() throws SQLException {
+    }
 
     public void initialize(URL location, ResourceBundle resources) {
         pasienStage = makeDialogStage("/uis/patientdialog.fxml", "Tambah pasien", App.PRIMARY_STAGE);
         tindakanDanRuleStage = makeDialogStage("/uis/tindakanruleformdialog.fxml", "Tambah rule dan tindakan", App.PRIMARY_STAGE);
-//        override those table so both having same pasien object reference
-        tblSemuaPasienController.overrideItems(pasiens);
-        tblPasienCheckupHariIniController.overrideItems(pasiens);
     }
 
     private Stage makeDialogStage(String fxml, String title, Stage owner) {

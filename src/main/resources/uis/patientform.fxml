@@ -15,38 +15,60 @@
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="265.0" minWidth="10.0" prefWidth="265.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="111.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="111.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="132.0" minHeight="2.0" prefHeight="32.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="146.0" minHeight="5.0" prefHeight="29.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="164.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="183.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="216.0" minHeight="9.0" prefHeight="33.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="347.0" minHeight="10.0" prefHeight="139.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="226.0" minHeight="10.0" prefHeight="72.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="50.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="50.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0"
+                                vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
                 <Label text="Nama" GridPane.rowIndex="1"/>
-                <Label text="Nama Panggilan" GridPane.rowIndex="2"/>
                 <Label text="Alamat" GridPane.rowIndex="7"/>
-                <Label text="Tanggal Lahir" GridPane.rowIndex="3"/>
+                <Label text="Tanggal Lahir" GridPane.rowIndex="2"/>
                 <Label text="Status Pernikahan" GridPane.rowIndex="8"/>
-                <Label text="No Telpon" GridPane.rowIndex="4"/>
-                <Label text="Pekerjaan" GridPane.rowIndex="5"/>
-                <Label text="Agama" GridPane.rowIndex="6"/>
-                <DatePicker fx:id="dtTglLahir" prefHeight="25.0" prefWidth="280.0" GridPane.columnIndex="1"
-                            GridPane.rowIndex="3"/>
+                <Label text="No Telpon" GridPane.rowIndex="3"/>
+                <Label text="Pekerjaan" GridPane.rowIndex="4"/>
+                <Label text="Tindakan"/>
+                <Label text="Diagnosis" GridPane.rowIndex="6"/>
+                <Label text="Tarif" GridPane.rowIndex="5"/>
+                <Label text="Foto" GridPane.rowIndex="9"/>
+                <ChoiceBox fx:id="cbTindakan" prefHeight="25.0" prefWidth="308.0" GridPane.columnIndex="1"/>
                 <TextField fx:id="tfNama" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1"
                            GridPane.rowIndex="1"/>
-                <TextField fx:id="tfNamaPanggilan" prefHeight="25.0" prefWidth="287.0" GridPane.columnIndex="1"
-                           GridPane.rowIndex="2"/>
-                <NumberTextField fx:id="tfNoTelpon" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                <TextField fx:id="tfPekerjaan" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-                <ChoiceBox fx:id="cbAgama" prefHeight="25.0" prefWidth="305.0" GridPane.columnIndex="1"
-                           GridPane.rowIndex="6"/>
-                <TextArea fx:id="taAlamat" prefHeight="118.0" prefWidth="273.0" GridPane.columnIndex="1"
-                          GridPane.rowIndex="7"/>
+                <DatePicker fx:id="dtTglLahir" prefHeight="25.0" prefWidth="280.0" GridPane.columnIndex="1"
+                            GridPane.rowIndex="2"/>
+                <NumberTextField fx:id="tfNoTelpon" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <TextField fx:id="tfPekerjaan" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <NumberTextField fx:id="tfTarif" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                <TextArea fx:id="taDiagnosis" prefHeight="70.0" prefWidth="265.0" GridPane.columnIndex="1"
+                          GridPane.rowIndex="6">
+                    <GridPane.margin>
+                        <Insets bottom="5.0"/>
+                    </GridPane.margin>
+                </TextArea>
+                <TextArea fx:id="taAlamat" prefHeight="200.0" prefWidth="273.0" GridPane.columnIndex="1"
+                          GridPane.rowIndex="7">
+                    <GridPane.margin>
+                        <Insets/>
+                    </GridPane.margin>
+                </TextArea>
                 <HBox prefHeight="165.0" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                     <children>
                         <RadioButton fx:id="rbSudah" mnemonicParsing="false" text="Sudah">
@@ -57,21 +79,24 @@
                         <RadioButton fx:id="rbBelum" mnemonicParsing="false" text="Belum"/>
                     </children>
                     <padding>
-                        <Insets top="15.0"/>
+                        <Insets top="10.0"/>
                     </padding>
                 </HBox>
-                <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                <Button fx:id="btnPilihGambar" mnemonicParsing="false" onAction="#pilihGambar" text="Pilih gambar ..."
+                        GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
                     <children>
                         <Button fx:id="btnPositive" mnemonicParsing="false" onAction="#onOk" text="Ok">
                             <HBox.margin>
                                 <Insets right="5.0"/>
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="btnSegarkan" onAction="#resetForm" mnemonicParsing="false" text="Segarkan"/>
+                        <Button fx:id="btnSegarkan" mnemonicParsing="false" onAction="#resetForm" text="Segarkan"/>
                     </children>
+                    <padding>
+                        <Insets top="5.0"/>
+                    </padding>
                 </HBox>
-                <Label text="Tindakan"/>
-                <ChoiceBox fx:id="cbTindakan" prefHeight="25.0" prefWidth="308.0" GridPane.columnIndex="1"/>
             </children>
             <VBox.margin>
                 <Insets bottom="5.0" left="10.0" right="10.0"/>

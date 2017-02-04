@@ -7,12 +7,10 @@ import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
-import com.klinik.dev.db.model.Rule;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
 import com.klinik.dev.util.FileUtil;
-import com.klinik.dev.util.Log;
 import com.klinik.dev.util.Util;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,8 +20,6 @@ import tray.notification.NotificationType;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**

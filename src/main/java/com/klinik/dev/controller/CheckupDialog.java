@@ -41,7 +41,8 @@ public class CheckupDialog implements Initializable {
     private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
     private ObservableList tindakanLists = FXCollections.observableArrayList(tindakanDao.queryForAll());
 
-    public CheckupDialog() throws SQLException {}
+    public CheckupDialog() throws SQLException {
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

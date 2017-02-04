@@ -4,7 +4,6 @@ package com.klinik.dev;
  * Created by khairulimam on 26/01/17.
  */
 
-import com.j256.ormlite.table.TableUtils;
 import com.klinik.dev.util.Util;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -10,11 +10,7 @@ import com.klinik.dev.enums.STATUS;
 import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
-
-import java.time.Month;
-import java.time.Year;
 
 /**
  * Created by khairulimam on 23/01/17.

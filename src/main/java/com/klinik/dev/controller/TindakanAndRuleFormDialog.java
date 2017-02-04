@@ -11,7 +11,6 @@ import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RuleEvent;
 import com.klinik.dev.events.TindakanEvent;
-import com.klinik.dev.util.Log;
 import com.klinik.dev.util.Util;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,7 +19,6 @@ import tray.notification.NotificationType;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**

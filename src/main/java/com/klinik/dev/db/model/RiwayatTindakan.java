@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * Created by khairulimam on 25/01/17.
  */
-@DatabaseTable(tableName = "riwayat_tindakan")
+@DatabaseTable(tableName = RiwayatTindakan.TABLE_NAME)
 @Data
 public class RiwayatTindakan implements Comparable {
     @DatabaseField(generatedId = true)
@@ -21,7 +21,9 @@ public class RiwayatTindakan implements Comparable {
     @DatabaseField
     private String diagnosis;
     @DatabaseField
-    private int tarif;
+    private double tarif;
+
+    public static final String TABLE_NAME = "riwayat_tindakan";
 
     @Override
     public String toString() {
@@ -32,6 +34,18 @@ public class RiwayatTindakan implements Comparable {
 
     public String getTanggal() {
         return pasien.getCheckupTerakhirActualDate().toString(Util.DATE_PATTERN);
+    }
+
+    public int getYear() {
+        return getPasien().getCheckupTerakhir().getYear();
+    }
+
+    public int getMonth() {
+        return getPasien().getCheckupTerakhir().getMonthOfYear();
+    }
+
+    public double getTotal() {
+        return 0d;
     }
 
     @Override

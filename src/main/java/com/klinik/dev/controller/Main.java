@@ -6,6 +6,7 @@ import com.klinik.dev.App;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.util.Util;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +29,7 @@ import java.util.ResourceBundle;
 @Data
 public class Main implements Initializable {
 
-    private Stage pasienStage, tindakanDanRuleStage;
+    private Stage pasienStage, tindakanDanRuleStage, monitorPemasukanStage;
     private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
     private List<Pasien> pasiens = pasienDao.queryForAll();
 
@@ -75,5 +76,10 @@ public class Main implements Initializable {
     @FXML
     private void searchPatient() {
         Util.showNotif("Coba", "Coba pesan", NotificationType.WARNING);
+    }
+
+    public void monitorPemasukan(ActionEvent event) {
+        monitorPemasukanStage = makeDialogStage("/uis/monitorpemasukan.fxml", "Monitor pemasukan", App.PRIMARY_STAGE);
+        monitorPemasukanStage.showAndWait();
     }
 }

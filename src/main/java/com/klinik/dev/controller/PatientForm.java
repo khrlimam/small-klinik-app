@@ -99,7 +99,7 @@ public class PatientForm implements Initializable {
         RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
         riwayatTindakan.setPasien(newPasien);
         riwayatTindakan.setDiagnosis(taDiagnosis.getText());
-        riwayatTindakan.setTarif(Integer.valueOf(tfTarif.getText()));
+        riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
         riwayatTindakan.setTindakan(newPasien.getTindakan());
         return riwayatTindakan;
     }

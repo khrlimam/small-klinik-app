@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ComparableCollections {
     public static void sort(List toBeSort, Comparable comparable) {
-        Collections.sort(toBeSort, ComparableComparator.getInstance(comparable));
+        Collections.sort(toBeSort,  ComparableComparator.getInstance(comparable));
     }
 
     public static int binarySearch(List searchFrom, Comparable toBeSearch) {

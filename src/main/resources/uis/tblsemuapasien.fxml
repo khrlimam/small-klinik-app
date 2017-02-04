@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox prefHeight="479.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.klinik.dev.controller.TblSemuaPasien">
+<VBox prefHeight="479.0" prefWidth="800.0" stylesheets="main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.klinik.dev.controller.TblSemuaPasien">
     <children>
-        <HBox>
+        <HBox stylesheets="@main.css">
             <children>
             <Label prefHeight="25.0" prefWidth="38.0" text="Filter: " />
-            <TextField fx:id="tfFilterTable" prefHeight="25.0" prefWidth="202.0" promptText="NO RM, Nama">
+            <TextField fx:id="tfFilterTable" prefHeight="25.0" prefWidth="202.0" promptText="NO RM, Nama" style="-fx-border-radius: 0;">
                <HBox.margin>
                   <Insets right="3.0" />
                </HBox.margin>
             </TextField>
                 <DatePicker fx:id="dpFilterTable" minWidth="18.0" onAction="#filterByDate" prefHeight="25.0" prefWidth="27.0" promptText="Cari nama, NO RM, jadwal checkup" />
                 <Pane prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onAction="#showPatient" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #1abc9c;" text="(S) Show" textFill="WHITE">
+                <Button mnemonicParsing="false" onAction="#showPatient" prefHeight="25.0" prefWidth="95.0" styleClass="btn-success" text="(S) Show">
                     <HBox.margin>
                         <Insets right="3.0" />
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#checkupPatient" prefHeight="25.0" prefWidth="110.0" style="-fx-background-color: #2980b9;" text="(C) Checkup" textFill="WHITE">
+                <Button mnemonicParsing="false" onAction="#checkupPatient" prefHeight="25.0" prefWidth="110.0" styleClass="btn-info" text="(C) Checkup" textFill="WHITE">
                     <HBox.margin>
                         <Insets right="3.0" />
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#deletePatient" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #e74c3c;" text="(D) Delete" textFill="WHITE">
+                <Button mnemonicParsing="false" onAction="#deletePatient" prefHeight="25.0" prefWidth="95.0" styleClass="btn-danger" text="(D) Delete" textFill="WHITE">
                     <HBox.margin>
                         <Insets right="3.0" />
                     </HBox.margin>

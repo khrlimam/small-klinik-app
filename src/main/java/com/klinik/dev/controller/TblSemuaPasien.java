@@ -212,6 +212,7 @@ public class TblSemuaPasien implements Initializable {
     public void showPatient() throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/uis/showpatient.fxml"));
         Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
+        checkPatient(selectedPasien);
         AnchorPane pane = loader.load();
         ShowPatient showPatient = loader.getController();
         pasienDao.refresh(selectedPasien);
@@ -225,8 +226,16 @@ public class TblSemuaPasien implements Initializable {
         stage.showAndWait();
     }
 
+    private void checkPatient(Pasien selectedPasien) {
+        if (selectedPasien == null) {
+            Util.showNotif("Error", "Pilih pasien dulu", NotificationType.ERROR);
+            throw new NullPointerException("Pilih pasien dulu!");
+        }
+    }
+
     public void checkupPatient() throws IOException {
         Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
+        checkPatient(selectedPasien);
         FXMLLoader checkupdialog = new FXMLLoader(getClass().getResource("/uis/checkupdialog.fxml"));
         AnchorPane checkdialogpane = checkupdialog.load();
         CheckupDialog checkupDialogController = checkupdialog.getController();
@@ -257,8 +266,9 @@ public class TblSemuaPasien implements Initializable {
     }
 
     public void deletePatient() throws SQLException {
-        Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
         Pasien selectedPasien = tblPasien.getSelectionModel().getSelectedItem();
+        checkPatient(selectedPasien);
+        Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
         boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
         if (isOK) {
             int deleted = pasienDao.delete(selectedPasien);

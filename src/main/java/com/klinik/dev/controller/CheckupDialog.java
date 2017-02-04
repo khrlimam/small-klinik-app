@@ -58,7 +58,7 @@ public class CheckupDialog implements Initializable {
     public RiwayatTindakan getRiwayatTindakan() {
         RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
         riwayatTindakan.setDiagnosis(taDiagnosis.getText());
-        riwayatTindakan.setTarif(Integer.parseInt(tfTarif.getText()));
+        riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
         return riwayatTindakan;
     }
 

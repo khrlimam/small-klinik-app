@@ -97,7 +97,7 @@ public class ShowPatient implements Initializable {
         diagnosisColumn.setCellValueFactory(new PropertyValueFactory<>("diagnosis"));
     }
 
-    public void gantiGambar(ActionEvent event) throws SQLException {
+    public void gantiGambar() throws SQLException {
         if (pasien != null) {
             try {
                 File fileSrcFile = fileChooser.showOpenDialog(App.PRIMARY_STAGE);

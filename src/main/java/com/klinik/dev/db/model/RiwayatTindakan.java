@@ -1,10 +1,12 @@
 package com.klinik.dev.db.model;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
 import com.klinik.dev.util.Util;
 import lombok.Data;
+import org.joda.time.DateTime;
 
 /**
  * Created by khairulimam on 25/01/17.
@@ -22,6 +24,8 @@ public class RiwayatTindakan implements Comparable {
     private String diagnosis;
     @DatabaseField
     private double tarif;
+    @DatabaseField(dataType = DataType.DATE_TIME)
+    private DateTime tglCheckup;
 
     public static final String TABLE_NAME = "riwayat_tindakan";
 
@@ -33,15 +37,15 @@ public class RiwayatTindakan implements Comparable {
     }
 
     public String getTanggal() {
-        return pasien.getCheckupTerakhirActualDate().toString(Util.DATE_PATTERN);
+        return tglCheckup.toString(Util.DATE_PATTERN);
     }
 
     public int getYear() {
-        return getPasien().getCheckupTerakhir().getYear();
+        return tglCheckup.getYear();
     }
 
     public int getMonth() {
-        return getPasien().getCheckupTerakhir().getMonthOfYear();
+        return tglCheckup.getMonthOfYear();
     }
 
     public double getTotal() {

@@ -8,6 +8,7 @@ import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.util.FileUtil;
+import com.klinik.dev.util.Log;
 import com.klinik.dev.util.Util;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

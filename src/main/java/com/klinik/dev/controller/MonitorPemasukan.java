@@ -8,14 +8,15 @@ import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RiwayatTindakanEvent;
 import com.klinik.dev.util.Log;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import lombok.Data;
 
@@ -34,6 +35,8 @@ public class MonitorPemasukan implements Initializable {
 
     @FXML
     private AnchorPane apChartContainer;
+    @FXML
+    private Button thnSelanjutnya, thnSebelumnya;
 
     @FXML
     private LineChart<Number, Number> lcLineChart;
@@ -42,8 +45,9 @@ public class MonitorPemasukan implements Initializable {
 
     private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
     private List<RiwayatTindakan> all = riwayatTindakanDao.queryForAll();
-    private ObservableList<XYChart.Series<Integer, String>> chartSeries;
+    private ObservableList<XYChart.Series<Number, Number>> chartSeries;
     private Map<Integer, Map<Integer, Double>> pendapatanSetiapTahun;
+    private int indexYearPosition = 0;
 
 
     public MonitorPemasukan() throws SQLException {
@@ -54,8 +58,21 @@ public class MonitorPemasukan implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
         populatePendapatanSetiapTahunMap();
-        int firstYear = getYears().get(0);
-        populateLineChartSeriesData(firstYear);
+        if (getYears() != null && getYears().size() > 0) {
+            xAxis.setAutoRanging(false);
+            xAxis.setTickUnit(1d);
+            xAxis.setLowerBound(.5d);
+            xAxis.setUpperBound(12.5d);
+            disableThnSelanjutnya();
+            disableThnSebelumnya();
+            int firstYear = getYears().get(0);
+            populateLineChartSeriesData(firstYear);
+        } else {
+            xAxis.setLabel("Tidak ada data");
+            thnSebelumnya.setDisable(true);
+            thnSelanjutnya.setDisable(true);
+            lcLineChart.setDisable(true);
+        }
     }
 
     private void populatePendapatanSetiapTahunMap() {
@@ -67,20 +84,19 @@ public class MonitorPemasukan implements Initializable {
     }
 
     private void populateLineChartSeriesData(int year) {
-        xAxis.setAutoRanging(false);
-        xAxis.setTickUnit(1d);
-        xAxis.setLowerBound(1d);
-        xAxis.setUpperBound(12);
         lcLineChart.setCursor(Cursor.CROSSHAIR);
         XYChart.Series series = new XYChart.Series();
         series.setName(String.format("Jumlah pemasukan tahun %d", year));
         pendapatanSetiapTahun.get(year).entrySet().stream().forEach(pendapatanPerbulanEntry ->
                 series.getData().add(new XYChart.Data(pendapatanPerbulanEntry.getKey(), pendapatanPerbulanEntry.getValue())));
-        lcLineChart.getData().add(series);
+        chartSeries = FXCollections.observableArrayList(series);
+        lcLineChart.setData(chartSeries);
     }
 
     private List<Integer> getYears() {
-        return pendapatanSetiapTahun.entrySet().stream().map(integerMapEntry -> integerMapEntry.getKey()).collect(Collectors.toList());
+        if (pendapatanSetiapTahun != null && pendapatanSetiapTahun.size() > 0)
+            return pendapatanSetiapTahun.entrySet().stream().map(integerMapEntry -> integerMapEntry.getKey()).collect(Collectors.toList());
+        return null;
     }
 
     @Subscribe
@@ -91,11 +107,40 @@ public class MonitorPemasukan implements Initializable {
         populatePendapatanSetiapTahunMap();
     }
 
-    public void chartTahunSebelumnya(ActionEvent event) {
-
+    public void chartTahunSebelumnya() {
+        int showThisYear = getDecrementalIndex();
+        if (showThisYear > -1)
+            populateLineChartSeriesData(getYears().get(showThisYear));
+        disableThnSebelumnya();
+        disableThnSelanjutnya();
     }
 
-    public void chartTahunSelanjutnya(ActionEvent event) {
-
+    public void chartTahunSelanjutnya() {
+        int showThisYear = getIncrementalIndex();
+        if (showThisYear > -1)
+            populateLineChartSeriesData(getYears().get(showThisYear));
+        disableThnSelanjutnya();
+        disableThnSebelumnya();
     }
+
+    private void disableThnSebelumnya() {
+        thnSebelumnya.setDisable(indexYearPosition - 1 < 0);
+    }
+
+    private void disableThnSelanjutnya() {
+        thnSelanjutnya.setDisable(indexYearPosition + 1 > getYears().size() - 1);
+    }
+
+    private int getIncrementalIndex() {
+        if (++indexYearPosition < getYears().size())
+            return indexYearPosition;
+        return -1;
+    }
+
+    private int getDecrementalIndex() {
+        if (--indexYearPosition > -1)
+            return indexYearPosition;
+        return -1;
+    }
+
 }

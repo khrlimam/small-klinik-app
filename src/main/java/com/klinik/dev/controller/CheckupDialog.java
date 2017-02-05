@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import lombok.Data;
+import org.joda.time.DateTime;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -59,6 +60,7 @@ public class CheckupDialog implements Initializable {
         RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
         riwayatTindakan.setDiagnosis(taDiagnosis.getText());
         riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
+        riwayatTindakan.setTglCheckup(DateTime.now());
         return riwayatTindakan;
     }
 

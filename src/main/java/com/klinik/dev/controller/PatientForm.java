@@ -101,6 +101,7 @@ public class PatientForm implements Initializable {
         riwayatTindakan.setDiagnosis(taDiagnosis.getText());
         riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
         riwayatTindakan.setTindakan(newPasien.getTindakan());
+        riwayatTindakan.setTglCheckup(DateTime.now());
         return riwayatTindakan;
     }
 

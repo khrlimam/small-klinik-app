@@ -72,7 +72,7 @@
                 <configuration>
                     <mainClass>com.klinik.dev.App</mainClass>
                     <verbose>true</verbose>
-                    <jfxMainAppJarName>klinikapp</jfxMainAppJarName>
+                    <jfxMainAppJarName>klinikapp.jar</jfxMainAppJarName>
                     <vendor>com.dev.klinik</vendor>
                     <needShortcut>true</needShortcut>
                     <needMenu>true</needMenu>

@@ -27,6 +27,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException, SQLException {
         this.PRIMARY_STAGE = primaryStage;
+        Util.migrateUp();
         Parent root = FXMLLoader.load(getClass().getResource(MAIN_UI));
         primaryStage.setTitle(Util.APP_NAME);
         primaryStage.setScene(new Scene(root));

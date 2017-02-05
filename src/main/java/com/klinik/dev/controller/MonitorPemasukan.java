@@ -3,11 +3,12 @@ package com.klinik.dev.controller;
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.klinik.dev.customui.HoveredLineChartNode;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RiwayatTindakanEvent;
-import com.klinik.dev.util.Log;
+import com.klinik.dev.util.NumberFormatUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,10 +20,13 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import lombok.Data;
+import org.joda.time.DateTime;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -61,8 +65,8 @@ public class MonitorPemasukan implements Initializable {
         if (getYears() != null && getYears().size() > 0) {
             xAxis.setAutoRanging(false);
             xAxis.setTickUnit(1d);
-            xAxis.setLowerBound(.5d);
-            xAxis.setUpperBound(12.5d);
+            xAxis.setLowerBound(0d);
+            xAxis.setUpperBound(14d);
             disableThnSelanjutnya();
             disableThnSebelumnya();
             int firstYear = getYears().get(0);
@@ -87,8 +91,16 @@ public class MonitorPemasukan implements Initializable {
         lcLineChart.setCursor(Cursor.CROSSHAIR);
         XYChart.Series series = new XYChart.Series();
         series.setName(String.format("Jumlah pemasukan tahun %d", year));
-        pendapatanSetiapTahun.get(year).entrySet().stream().forEach(pendapatanPerbulanEntry ->
-                series.getData().add(new XYChart.Data(pendapatanPerbulanEntry.getKey(), pendapatanPerbulanEntry.getValue())));
+        pendapatanSetiapTahun.get(year).entrySet().stream().forEach(pendapatanPerbulanEntry -> {
+            int x = pendapatanPerbulanEntry.getKey();
+            Double y = pendapatanPerbulanEntry.getValue();
+            String popup = String.format("%s\n%s",
+                    DateFormatSymbols.getInstance().getMonths()[x-1],
+                    NumberFormatUtil.getRupiahFormat().format(y));
+            XYChart.Data data = new XYChart.Data(x, y);
+            data.setNode(new HoveredLineChartNode(popup));
+            series.getData().add(data);
+        });
         chartSeries = FXCollections.observableArrayList(series);
         lcLineChart.setData(chartSeries);
     }

@@ -2,8 +2,6 @@ package com.klinik.dev.customui;
 
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 

@@ -27,7 +27,8 @@
                                                 <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
                                                 <VBox>
                                                     <children>
-                                                        <ImageView fx:id="ivPatient" onMouseClicked="#gantiGambar" fitHeight="119.0" fitWidth="135.0"
+                                                        <ImageView fx:id="ivPatient" onMouseClicked="#gantiGambar"
+                                                                   fitHeight="119.0" fitWidth="135.0"
                                                                    pickOnBounds="true" preserveRatio="true"
                                                                    style="-fx-cursor: hand;">
                                                             <HBox.margin>

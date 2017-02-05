@@ -20,13 +20,11 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import lombok.Data;
-import org.joda.time.DateTime;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -95,7 +93,7 @@ public class MonitorPemasukan implements Initializable {
             int x = pendapatanPerbulanEntry.getKey();
             Double y = pendapatanPerbulanEntry.getValue();
             String popup = String.format("%s\n%s",
-                    DateFormatSymbols.getInstance().getMonths()[x-1],
+                    DateFormatSymbols.getInstance().getMonths()[x - 1],
                     NumberFormatUtil.getRupiahFormat().format(y));
             XYChart.Data data = new XYChart.Data(x, y);
             data.setNode(new HoveredLineChartNode(popup));
@@ -154,5 +152,4 @@ public class MonitorPemasukan implements Initializable {
             return indexYearPosition;
         return -1;
     }
-
 }

@@ -71,13 +71,13 @@ public class Util {
             Pasien p = pd.queryBuilder().queryForFirst();
             p.setCheckupTerakhir(initDate);
             RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
-            riwayatTindakan.setDiagnosis("Diagnosis tes "+i);
+            riwayatTindakan.setDiagnosis("Diagnosis tes " + i);
             riwayatTindakan.setPasien(p);
             riwayatTindakan.setTindakan(t);
             riwayatTindakan.setTarif(pen);
             riwayatTindakan.setTglCheckup(initDate);
             rd.create(riwayatTindakan);
-            pen = 50000+random.nextInt(30000);
+            pen = 50000 + random.nextInt(30000);
             initDate = initDate.plusMonths(1);
         }
     }

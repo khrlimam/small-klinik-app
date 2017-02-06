@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,7 +54,7 @@ public class TblSemuaPasien implements Initializable {
     private Dao<Tindakan, Integer> tindakans = DaoManager.createDao(DB.getDB(), Tindakan.class);
     private Dao<RiwayatTindakan, Integer> riwayatTindakans = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
 
-    private List<Tindakan> tindakanList = tindakans.queryForAll();
+    private ObservableList<Tindakan> tindakanList = FXCollections.observableArrayList(tindakans.queryForAll());
     private ObservableList<Pasien> listPasiens = FXCollections.observableArrayList(pasienDao.queryForAll());
 
     @FXML
@@ -66,6 +67,8 @@ public class TblSemuaPasien implements Initializable {
     private TableColumn<Pasien, String> noRmColumn, namaColumn, tindakanColumn, diagnosisColumn;
     @FXML
     private TableColumn<Pasien, Pasien> jadwalCheckupColumn;
+    @FXML
+    private ChoiceBox<Tindakan> cbFilter;
 
     public TblSemuaPasien() throws SQLException {
     }
@@ -95,6 +98,7 @@ public class TblSemuaPasien implements Initializable {
                 return null;
             }
         };
+        cbFilter.setItems(tindakanList);
         dpFilterTable.setConverter(dpFilterConverter);
         dpFilterTable.getEditor().setDisable(true);
         dpFilterTable.getEditor().setStyle("visibility: hidden;");
@@ -155,6 +159,8 @@ public class TblSemuaPasien implements Initializable {
             else if (pasien.getNama().toLowerCase().contains(newValue.toLowerCase()))
                 return true;
             else if (pasien.getJadwalSelanjutnya().contains(newValue))
+                return true;
+            else if (pasien.getTindakan().getNamaTindakan().contains(newValue))
                 return true;
             return false;
         }));
@@ -281,5 +287,9 @@ public class TblSemuaPasien implements Initializable {
 
     public void filterByDate() {
         tfFilterTable.setText(dpFilterTable.getEditor().getText());
+    }
+
+    public void filterByTindakan(ActionEvent event) {
+        tfFilterTable.setText(cbFilter.getValue().toString());
     }
 }

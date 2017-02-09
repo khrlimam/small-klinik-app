@@ -49,6 +49,7 @@ public class MonitorPemasukan implements Initializable {
     private List<RiwayatTindakan> all = riwayatTindakanDao.queryForAll();
     private ObservableList<XYChart.Series<Number, Number>> chartSeries;
     private Map<Integer, Map<Integer, Double>> pendapatanSetiapTahun;
+    Map<Integer, Map<Integer, List<RiwayatTindakan>>> riwayatTindakanPerbulan;
     private int indexYearPosition = 0;
 
 
@@ -59,14 +60,14 @@ public class MonitorPemasukan implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
-        populatePendapatanSetiapTahunMap();
+        populatePendapatanAndTransaksiRiwayatTindakanSetiapTahun();
         if (getYears() != null && getYears().size() > 0) {
             xAxis.setAutoRanging(false);
             xAxis.setTickUnit(1d);
             xAxis.setLowerBound(0d);
             xAxis.setUpperBound(14d);
-            disableThnSelanjutnya();
-            disableThnSebelumnya();
+            toggleBtnTahunSelanjutnya();
+            toggleBtnTahunSebelumnya();
             int firstYear = getYears().get(0);
             populateLineChartSeriesData(firstYear);
         } else {
@@ -77,12 +78,17 @@ public class MonitorPemasukan implements Initializable {
         }
     }
 
-    private void populatePendapatanSetiapTahunMap() {
+    private void populatePendapatanAndTransaksiRiwayatTindakanSetiapTahun() {
         pendapatanSetiapTahun = all.stream()
                 .collect(Collectors
                         .groupingBy(RiwayatTindakan::getYear,
                                 Collectors.groupingBy(RiwayatTindakan::getMonth,
-                                        Collectors.summingDouble(RiwayatTindakan::getTarif))));
+                                        Collectors.summingDouble(RiwayatTindakan::getTarif)
+                                )));
+        riwayatTindakanPerbulan = all.stream()
+                .collect(Collectors
+                        .groupingBy(RiwayatTindakan::getYear,
+                                Collectors.groupingBy(RiwayatTindakan::getMonth)));
     }
 
     private void populateLineChartSeriesData(int year) {
@@ -92,9 +98,11 @@ public class MonitorPemasukan implements Initializable {
         pendapatanSetiapTahun.get(year).entrySet().stream().forEach(pendapatanPerbulanEntry -> {
             int x = pendapatanPerbulanEntry.getKey();
             Double y = pendapatanPerbulanEntry.getValue();
-            String popup = String.format("%s\n%s",
+            int jumlahTransaksi = riwayatTindakanPerbulan.get(year).get(pendapatanPerbulanEntry.getKey()).size();
+            String popup = String.format("%s\n%s\n%d Pasien",
                     DateFormatSymbols.getInstance().getMonths()[x - 1],
-                    NumberFormatUtil.getRupiahFormat().format(y));
+                    NumberFormatUtil.getRupiahFormat().format(y),
+                    jumlahTransaksi);
             XYChart.Data data = new XYChart.Data(x, y);
             data.setNode(new HoveredLineChartNode(popup));
             series.getData().add(data);
@@ -114,30 +122,30 @@ public class MonitorPemasukan implements Initializable {
         // riwayat tindakan only moving forward, so we only accapting add eventtype lets assume that as default
         all.add(riwayatTindakanEvent.getRiwayatTindakan());
         // i dont know if this is best practice or not
-        populatePendapatanSetiapTahunMap();
+        populatePendapatanAndTransaksiRiwayatTindakanSetiapTahun();
     }
 
     public void chartTahunSebelumnya() {
         int showThisYear = getDecrementalIndex();
         if (showThisYear > -1)
             populateLineChartSeriesData(getYears().get(showThisYear));
-        disableThnSebelumnya();
-        disableThnSelanjutnya();
+        toggleBtnTahunSebelumnya();
+        toggleBtnTahunSelanjutnya();
     }
 
     public void chartTahunSelanjutnya() {
         int showThisYear = getIncrementalIndex();
         if (showThisYear > -1)
             populateLineChartSeriesData(getYears().get(showThisYear));
-        disableThnSelanjutnya();
-        disableThnSebelumnya();
+        toggleBtnTahunSelanjutnya();
+        toggleBtnTahunSebelumnya();
     }
 
-    private void disableThnSebelumnya() {
+    private void toggleBtnTahunSebelumnya() {
         thnSebelumnya.setDisable(indexYearPosition - 1 < 0);
     }
 
-    private void disableThnSelanjutnya() {
+    private void toggleBtnTahunSelanjutnya() {
         thnSelanjutnya.setDisable(indexYearPosition + 1 > getYears().size() - 1);
     }
 
@@ -152,4 +160,16 @@ public class MonitorPemasukan implements Initializable {
             return indexYearPosition;
         return -1;
     }
+
+    @Data
+    private class TotalKepengDanPasien {
+        private double totalKepeng;
+        private int totalPasien;
+
+        public TotalKepengDanPasien(double k, int p) {
+            this.totalKepeng = k;
+            this.totalPasien = p;
+        }
+    }
+
 }

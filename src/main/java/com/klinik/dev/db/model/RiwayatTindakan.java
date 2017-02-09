@@ -37,7 +37,7 @@ public class RiwayatTindakan implements Comparable {
     }
 
     public String getTanggal() {
-        return tglCheckup.toString(Util.DATE_PATTERN);
+        return tglCheckup.toString(String.format(Util.DATE_TIME_PATTERN));
     }
 
     public int getYear() {
@@ -46,10 +46,6 @@ public class RiwayatTindakan implements Comparable {
 
     public int getMonth() {
         return tglCheckup.getMonthOfYear();
-    }
-
-    public double getTotal() {
-        return 0d;
     }
 
     @Override

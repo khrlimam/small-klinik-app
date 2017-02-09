@@ -24,6 +24,7 @@ public class Util {
     public static final String DATE_PATTERN = "dd.MM.yyyy";
     public static final String TABLE_CONTROL_TOOLTIP = "Pilih baris kemudian tekan:\n1. D/d untuk menghapus\n2. Double klik pada cell untuk mengubah data\n3. C/c untuk checkup\n4. S/s untuk melihat rincian pasien";
     public static final int MAX_TIME_ABSENCE = 2;
+    public static final String DATE_TIME_PATTERN = String.format("%s, HH:mm:ss", DATE_PATTERN);
 
     public static Class[] classes = {Pasien.class, RiwayatTindakan.class, Rule.class, Tindakan.class, TindakanRule.class};
 

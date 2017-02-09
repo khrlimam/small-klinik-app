@@ -57,6 +57,8 @@ public class TblSemuaPasien implements Initializable {
     private ObservableList<Tindakan> tindakanList = FXCollections.observableArrayList(tindakans.queryForAll());
     private ObservableList<Pasien> listPasiens = FXCollections.observableArrayList(pasienDao.queryForAll());
 
+    private Label label;
+
     @FXML
     private DatePicker dpFilterTable;
     @FXML
@@ -69,6 +71,8 @@ public class TblSemuaPasien implements Initializable {
     private TableColumn<Pasien, Pasien> jadwalCheckupColumn;
     @FXML
     private ChoiceBox<Tindakan> cbFilter;
+    @FXML
+    private Label lblFilterTable;
 
     public TblSemuaPasien() throws SQLException {
     }
@@ -99,32 +103,29 @@ public class TblSemuaPasien implements Initializable {
             }
         };
         cbFilter.setItems(tindakanList);
+        cbFilter.getSelectionModel().select(0);
+        lblFilterTable.setText("");
         dpFilterTable.setConverter(dpFilterConverter);
-        dpFilterTable.getEditor().setDisable(true);
-        dpFilterTable.getEditor().setStyle("visibility: hidden;");
-        jadwalCheckupColumn.setCellFactory(column -> {
-            return new TableCell<Pasien, Pasien>() {
-                @Override
-                protected void updateItem(Pasien item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item == null || empty) {
-                        setText(null);
-                        setStyle("");
-                    } else {
-                        // Format date.
-                        setText(item.getJadwalSelanjutnya());
-                        for (TindakanRule tindakanRule : item.getTindakan().getTindakanrules()) {
-                            if (tindakanRule.getRule().isMoreThanPeriod(item.getCheckupTerakhir())) {
-                                setTextFill(Paint.valueOf("#ecf0f1"));
-                                setStyle("-fx-background-color: #e74c3c");
-                                break;
-                            } else {
-                                setStyle("");
-                            }
+        jadwalCheckupColumn.setCellFactory((TableColumn<Pasien, Pasien> column) -> new TableCell<Pasien, Pasien>() {
+            @Override
+            protected void updateItem(Pasien item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    // Format date.
+                    setText(item.getJadwalSelanjutnya());
+                    for (TindakanRule tindakanRule : item.getTindakan().getTindakanrules()) {
+                        if (tindakanRule.getRule().isMoreThanPeriod(item.getCheckupTerakhir())) {
+                            setStyle("-fx-background-color: #e74c3c");
+                            break;
+                        } else {
+                            setStyle("");
                         }
                     }
                 }
-            };
+            }
         });
         setUpTableColumnItems();
     }
@@ -151,7 +152,7 @@ public class TblSemuaPasien implements Initializable {
 
     private SortedList<Pasien> sortedListFromTextField() {
         FilteredList<Pasien> pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
-        tfFilterTable.textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
+        lblFilterTable.textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
             if (newValue == null || newValue.isEmpty())
                 return true;
             if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
@@ -286,10 +287,14 @@ public class TblSemuaPasien implements Initializable {
     }
 
     public void filterByDate() {
-        tfFilterTable.setText(dpFilterTable.getEditor().getText());
+        lblFilterTable.setText(dpFilterTable.getEditor().getText());
     }
 
-    public void filterByTindakan(ActionEvent event) {
-        tfFilterTable.setText(cbFilter.getValue().toString());
+    public void filterByTindakan() {
+        lblFilterTable.setText(cbFilter.getValue().toString());
+    }
+
+    public void filterTableByName() {
+        lblFilterTable.setText(tfFilterTable.getText());
     }
 }

@@ -160,16 +160,4 @@ public class MonitorPemasukan implements Initializable {
             return indexYearPosition;
         return -1;
     }
-
-    @Data
-    private class TotalKepengDanPasien {
-        private double totalKepeng;
-        private int totalPasien;
-
-        public TotalKepengDanPasien(double k, int p) {
-            this.totalKepeng = k;
-            this.totalPasien = p;
-        }
-    }
-
 }

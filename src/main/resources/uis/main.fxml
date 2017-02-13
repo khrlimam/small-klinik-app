@@ -15,7 +15,7 @@
                 <Pane prefWidth="800.0" styleClass="header-primary">
                     <children>
                         <Label prefHeight="24.0" prefWidth="500.0" styleClass="header-text-primary"
-                               text="dr. Wiwin Mulianingsih, Sp. KK. M.Kes">
+                               text="Private Patient Storage">
                             <padding>
                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
                             </padding>

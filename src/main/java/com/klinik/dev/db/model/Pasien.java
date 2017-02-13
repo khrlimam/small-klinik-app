@@ -66,7 +66,11 @@ public class Pasien implements Comparable {
             return "";
         StringBuilder stringBuilder = new StringBuilder();
         ForeignCollection<TindakanRule> rules = tindakan.getTindakanrules();
-        rules.forEach(tindakanRule -> stringBuilder.append(String.format("%s, %s\n", tindakanRule.getRule().getRuleName(), tindakanRule.getRule().toStringDate(checkupTerakhir))));
+        rules.forEach(tindakanRule -> {
+            Rule rule = tindakanRule.getRule();
+            if (rule != null)
+                stringBuilder.append(String.format("%s, %s\n", rule.getRuleName(), rule.toStringDate(checkupTerakhir)));
+        });
         return stringBuilder.toString();
     }
 

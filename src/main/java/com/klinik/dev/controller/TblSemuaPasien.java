@@ -5,10 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.App;
 import com.klinik.dev.db.DB;
-import com.klinik.dev.db.model.Pasien;
-import com.klinik.dev.db.model.RiwayatTindakan;
-import com.klinik.dev.db.model.Tindakan;
-import com.klinik.dev.db.model.TindakanRule;
+import com.klinik.dev.db.model.*;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
@@ -18,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +24,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -117,12 +112,14 @@ public class TblSemuaPasien implements Initializable {
                     // Format date.
                     setText(item.getJadwalSelanjutnya());
                     for (TindakanRule tindakanRule : item.getTindakan().getTindakanrules()) {
-                        if (tindakanRule.getRule().isMoreThanPeriod(item.getCheckupTerakhir())) {
-                            setStyle("-fx-background-color: #e74c3c");
-                            break;
-                        } else {
-                            setStyle("");
-                        }
+                        Rule rule = tindakanRule.getRule();
+                        if (rule != null)
+                            if (rule.isMoreThanPeriod(item.getCheckupTerakhir())) {
+                                setStyle("-fx-background-color: #e74c3c");
+                                break;
+                            } else {
+                                setStyle("");
+                            }
                     }
                 }
             }

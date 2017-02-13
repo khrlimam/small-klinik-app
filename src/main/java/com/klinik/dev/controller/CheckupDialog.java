@@ -40,7 +40,7 @@ public class CheckupDialog implements Initializable {
     private TextArea taDiagnosis;
 
     private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
-    private ObservableList tindakanLists = FXCollections.observableArrayList(tindakanDao.queryForAll());
+    private ObservableList listTindakan = FXCollections.observableArrayList(tindakanDao.queryForAll());
 
     public CheckupDialog() throws SQLException {
     }
@@ -48,7 +48,7 @@ public class CheckupDialog implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
-        cbTindakan.setItems(tindakanLists);
+        cbTindakan.setItems(listTindakan);
         cbTindakan.getSelectionModel().select(0);
     }
 
@@ -68,14 +68,14 @@ public class CheckupDialog implements Initializable {
     public void onTindakan(TindakanEvent tindakanEvent) {
         Tindakan tindakan = tindakanEvent.getTindakan();
         switch (tindakanEvent.getOPERATION_TYPE()) {
-            case CREATE:
-                tindakanLists.add(tindakan);
-                break;
             case DELETE:
-                tindakanLists.remove(tindakanLists.indexOf(tindakan));
+                listTindakan.remove(listTindakan.indexOf(tindakan));
                 break;
             case UPDATE:
-                tindakanLists.set(tindakanLists.indexOf(tindakan), tindakan);
+                listTindakan.set(listTindakan.indexOf(tindakan), tindakan);
+                break;
+            case CREATE:
+                listTindakan.add(tindakan);
                 break;
         }
     }

@@ -1,5 +1,6 @@
 package com.klinik.dev.customui;
 
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -15,14 +16,13 @@ public class HoveredLineChartNode extends StackPane {
 
         setOnMouseEntered(mouseEvent -> {
             getChildren().setAll(label);
-            setCursor(Cursor.NONE);
+            setCursor(Cursor.CROSSHAIR);
             toFront();
         });
 
-        setOnMouseExited(mouseEvent -> {
-            getChildren().clear();
-            setCursor(Cursor.CROSSHAIR);
-        });
+        setOnMouseExited(mouseEvent -> getChildren().clear());
+
+        setMargin(label, new Insets(70, 0, 0, 0));
     }
 
     private Label createDataThresholdLabel(String value) {

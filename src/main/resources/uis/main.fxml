@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css"
-            xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.klinik.dev.controller.Main">
     <children>
         <VBox prefHeight="577.0" prefWidth="727.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -29,7 +29,7 @@
                         <Button fx:id="btnTambahTindakanDanRule" mnemonicParsing="false"
                                 onAction="#showFormTambahTindakanDanRule" styleClass="btn-primary"
                                 text="Tambah Tindakan Dan Rule"/>
-                        <Button mnemonicParsing="false" onAction="#monitorPemasukan" styleClass="btn-primary"
+                        <Button mnemonicParsing="false" onAction="#showMonitorPemasukan" styleClass="btn-primary"
                                 text="Monitor Pemasukan"/>
                         <Pane HBox.hgrow="ALWAYS"/>
                     </items>

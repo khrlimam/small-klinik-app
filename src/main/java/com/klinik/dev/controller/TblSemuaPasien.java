@@ -29,6 +29,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.Data;
+import org.joda.time.DateTime;
 import tray.notification.NotificationType;
 
 import java.io.IOException;
@@ -252,6 +253,7 @@ public class TblSemuaPasien implements Initializable {
                 selectedPasien.setTindakan(tindakan);
                 RiwayatTindakan riwayatTindakan = checkupDialogController.getRiwayatTindakan();
                 selectedPasien.setDiagnosis(riwayatTindakan.getDiagnosis());
+                selectedPasien.setCheckupTerakhir(DateTime.now());
                 riwayatTindakan.setTindakan(tindakan);
                 riwayatTindakan.setPasien(selectedPasien);
                 pasienDao.update(selectedPasien);

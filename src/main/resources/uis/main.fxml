@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.klinik.dev.controller.Main">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.klinik.dev.controller.Main">
     <children>
-        <VBox prefHeight="577.0" prefWidth="727.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox prefHeight="577.0" prefWidth="727.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Pane />
-                <Pane />
+                <Pane/>
+                <Pane/>
                 <Pane prefWidth="800.0" styleClass="header-primary">
                     <children>
-                        <Label prefHeight="24.0" prefWidth="500.0" styleClass="header-text-primary" text="Private Patient Storage">
+                        <Label prefHeight="24.0" prefWidth="500.0" styleClass="header-text-primary"
+                               text="Private Patient Storage">
                             <padding>
-                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
                             </padding>
                         </Label>
                     </children>
                 </Pane>
                 <ToolBar>
                     <items>
-                        <Button fx:id="btnTambahPasien" mnemonicParsing="false" onAction="#showFormTambahPasien" styleClass="btn-primary" text="Pasien Baru" />
-                        <Button fx:id="btnTambahTindakanDanRule" mnemonicParsing="false" onAction="#showFormTambahTindakanDanRule" styleClass="btn-primary" text="Tambah Tindakan Dan Rule" />
-                        <Button mnemonicParsing="false" onAction="#showMonitorPemasukan" styleClass="btn-primary" text="Monitor Pemasukan" />
-                        <Pane HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnTambahPasien" mnemonicParsing="false" onAction="#showFormTambahPasien"
+                                styleClass="btn-primary" text="Pasien Baru"/>
+                        <Button fx:id="btnTambahTindakanDanRule" mnemonicParsing="false"
+                                onAction="#showFormTambahTindakanDanRule" styleClass="btn-primary"
+                                text="Tambah Tindakan Dan Rule"/>
+                        <Button mnemonicParsing="false" onAction="#showMonitorPemasukan" styleClass="btn-primary"
+                                text="Monitor Pemasukan"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
                     </items>
                 </ToolBar>
-                <Pane />
+                <Pane/>
                 <TabPane prefHeight="512.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Semua Pasien">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="421.0" prefWidth="800.0">
                                     <children>
-                                        <fx:include fx:id="tblSemuaPasien" source="tblsemuapasien.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <fx:include fx:id="tblSemuaPasien" source="tblsemuapasien.fxml"
+                                                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                     </children>
                                 </AnchorPane>
                             </content>

@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.App;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.*;
+import com.klinik.dev.enums.FILTERABLE;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
@@ -150,16 +151,18 @@ public class TblSemuaPasien implements Initializable {
     private SortedList<Pasien> sortedListFromTextField() {
         FilteredList<Pasien> pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
         lblFilterTable.textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
+            String[] whatFieldToFilter = newValue.split(",");
             if (newValue == null || newValue.isEmpty())
                 return true;
-            if (String.valueOf(pasien.getNoRekamMedis()).contains((newValue)))
+            if (String.valueOf(pasien.getNoRekamMedis()).contains((whatFieldToFilter[0])) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_NAME_OR_RM.name()))
                 return true;
-            else if (pasien.getNama().toLowerCase().contains(newValue.toLowerCase()))
+            else if (pasien.getNama().toLowerCase().contains(whatFieldToFilter[0].toLowerCase()) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_NAME_OR_RM.name()))
                 return true;
-            else if (pasien.getJadwalSelanjutnya().contains(newValue))
+            else if (pasien.getJadwalSelanjutnya().contains(whatFieldToFilter[0]) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_TANGGAL.name()))
                 return true;
-            else if (pasien.getTindakan().getNamaTindakan().contains(newValue))
+            else if (pasien.getTindakan().toString().contains(whatFieldToFilter[0]) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_TINDAKAN.name()))
                 return true;
+
             return false;
         }));
         SortedList<Pasien> pasienSortedList = new SortedList<>(pasienFilteredList);
@@ -284,14 +287,17 @@ public class TblSemuaPasien implements Initializable {
     }
 
     public void filterByDate() {
-        lblFilterTable.setText(dpFilterTable.getEditor().getText());
+        String whatToFilter = String.format("%s,%s", dpFilterTable.getEditor().getText(), FILTERABLE.FILTER_BY_TANGGAL.name());
+        lblFilterTable.setText(whatToFilter);
     }
 
     public void filterByTindakan() {
-        lblFilterTable.setText(cbFilter.getValue().toString());
+        String whatToFilter = String.format("%s,%s", cbFilter.getValue().toString(), FILTERABLE.FILTER_BY_TINDAKAN.name());
+        lblFilterTable.setText(whatToFilter);
     }
 
     public void filterTableByName() {
-        lblFilterTable.setText(tfFilterTable.getText());
+        String whatToFilter = String.format("%s,%s", tfFilterTable.getText(), FILTERABLE.FILTER_BY_NAME_OR_RM.name());
+        lblFilterTable.setText(whatToFilter);
     }
 }

@@ -27,11 +27,12 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException, SQLException {
         this.PRIMARY_STAGE = primaryStage;
-        // make tables if dont exist, throws exception otherwise
+        // make tables if dont exist
         Util.migrateUp();
         Parent root = FXMLLoader.load(getClass().getResource(MAIN_UI));
         primaryStage.setTitle(Util.APP_NAME);
         primaryStage.setScene(new Scene(root));
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 }

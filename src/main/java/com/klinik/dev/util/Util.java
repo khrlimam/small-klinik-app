@@ -6,14 +6,23 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.*;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.joda.time.DateTime;
 import tray.notification.NotificationType;
 import tray.notification.TrayNotification;
 
+import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -35,24 +44,24 @@ public class Util {
 
     public static void migrateUp() {
         ConnectionSource cs = DB.getDB();
-        for (Class c : classes) {
+        Arrays.stream(classes).forEach(aClass -> {
             try {
-                TableUtils.createTableIfNotExists(cs, c);
+                TableUtils.createTableIfNotExists(cs, aClass);
             } catch (SQLException e) {
-                e.printStackTrace();
+
             }
-        }
+        });
     }
 
     public static void migrateDown() {
         ConnectionSource cs = DB.getDB();
-        for (Class c : classes) {
+        Arrays.stream(classes).forEach(aClass -> {
             try {
-                TableUtils.dropTable(cs, c, false);
+                TableUtils.dropTable(cs, aClass, false);
             } catch (SQLException e) {
-                e.printStackTrace();
+
             }
-        }
+        });
     }
 
     public static Tooltip tableControlTooltip() {
@@ -97,6 +106,23 @@ public class Util {
 
     public static Alert editConfirmation() {
         return setUpDialog("Konfirmasi", "Yakin ingin mengubah data?", null, Alert.AlertType.CONFIRMATION);
+    }
+
+    public static Stage makeDialogStage(URL FXMLLocation, String title, Stage owner) {
+        try {
+            FXMLLoader loader = new FXMLLoader(FXMLLocation);
+            AnchorPane pane = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(owner);
+            Scene scene = new Scene(pane);
+            stage.setScene(scene);
+            return stage;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

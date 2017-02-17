@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -92,7 +91,6 @@ public class MonitorPemasukan implements Initializable {
     }
 
     private void populateLineChartSeriesData(int year) {
-        lcLineChart.setCursor(Cursor.CROSSHAIR);
         XYChart.Series series = new XYChart.Series();
         series.setName(String.format("Jumlah pemasukan tahun %d", year));
         pendapatanSetiapTahun.get(year).entrySet().stream().forEach(pendapatanPerbulanEntry -> {
@@ -119,9 +117,9 @@ public class MonitorPemasukan implements Initializable {
 
     @Subscribe
     public void onRiwayatTindakan(RiwayatTindakanEvent riwayatTindakanEvent) {
-        // riwayat tindakan only moving forward, so we only accapting add eventtype lets assume that as default
+        // riwayat tindakan only moving forward, so we only accepting add eventtype let's assume that as default event
         all.add(riwayatTindakanEvent.getRiwayatTindakan());
-        // i dont know if this is best practice or not
+        // i dont know if this is best practice
         populatePendapatanAndTransaksiRiwayatTindakanSetiapTahun();
     }
 

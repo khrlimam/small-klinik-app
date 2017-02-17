@@ -162,7 +162,7 @@ public class PatientForm implements Initializable {
         }
     }
 
-    public void pilihGambar(ActionEvent event) {
+    public void pilihGambar() {
         File sourceFile = fileChooser.showOpenDialog(App.PRIMARY_STAGE);
         try {
             Magic.getMagicMatch(sourceFile, false).getMimeType();

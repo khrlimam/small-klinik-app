@@ -253,7 +253,7 @@ public class TblSemuaPasien implements Initializable {
                 selectedPasien.setTindakan(tindakan);
                 RiwayatTindakan riwayatTindakan = checkupDialogController.getRiwayatTindakan();
                 selectedPasien.setDiagnosis(riwayatTindakan.getDiagnosis());
-                selectedPasien.setCheckupTerakhir(DateTime.now());
+                selectedPasien.setCheckupTerakhir(riwayatTindakan.getTglCheckup());
                 riwayatTindakan.setTindakan(tindakan);
                 riwayatTindakan.setPasien(selectedPasien);
                 pasienDao.update(selectedPasien);

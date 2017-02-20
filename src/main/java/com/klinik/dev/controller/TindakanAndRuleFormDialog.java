@@ -85,6 +85,7 @@ public class TindakanAndRuleFormDialog implements Initializable {
                                 e.printStackTrace();
                             }
                         });
+                        tindakanDao.refresh(tindakan);
                         EventBus.getInstance().post(new TindakanEvent(tindakan, OPERATION_TYPE.CREATE));
                     } catch (SQLException e) {
                         e.printStackTrace();

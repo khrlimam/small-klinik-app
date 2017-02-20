@@ -28,6 +28,13 @@ public class Tindakan implements Comparable {
         return getNamaTindakan();
     }
 
+    public String toString_() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getNamaTindakan());
+        tindakanrules.forEach(tindakanRule -> stringBuilder.append(", "+tindakanRule.getRule()));
+        return stringBuilder.toString();
+    }
+
     @Override
     public int toBeCompared() {
         return this.id;

@@ -218,9 +218,7 @@ public class TblSemuaPasien implements Initializable {
                 if (index > -1) {
                     listPasiens.stream()
                             .filter(pasien -> pasien.getTindakan() != null && pasien.getTindakan().getId() == tindakanEvent.getTindakan().getId())
-                            .forEach(pasien -> {
-                                pasien.setTindakan(null);
-                            });
+                            .forEach(pasien -> pasien.setTindakan(null));
                     listPasiens.forEach(pasien -> EventBus.getInstance().post(new PasienEvent(pasien, OPERATION_TYPE.UPDATE)));
                     tindakanList.remove(index);
                 }

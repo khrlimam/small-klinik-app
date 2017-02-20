@@ -3,6 +3,7 @@ package com.klinik.dev.controller;
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.klinik.dev.contract.Comparable;
 import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Tindakan;
@@ -36,9 +37,10 @@ import java.util.ResourceBundle;
 public class LvTindakan implements Initializable {
 
     private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
-    private ObservableList<Tindakan> listTindakan = FXCollections.observableArrayList(tindakanDao.queryForAll());
+    private ObservableList<TindakanDecorator> listTindakan = FXCollections.observableArrayList();
+
     @FXML
-    private ListView<Tindakan> lvTindakan;
+    private ListView<TindakanDecorator> lvTindakan;
 
     public LvTindakan() throws SQLException {
     }
@@ -46,6 +48,11 @@ public class LvTindakan implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         EventBus.getInstance().register(this);
+        try {
+            tindakanDao.queryForAll().stream().forEach(tindakan -> listTindakan.add(new TindakanDecorator(tindakan)));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         lvTindakan.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         lvTindakan.setItems(listTindakan);
     }
@@ -54,7 +61,7 @@ public class LvTindakan implements Initializable {
     public void onTindakan(TindakanEvent tindakanEvent) {
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case CREATE:
-                listTindakan.add(tindakanEvent.getTindakan());
+                listTindakan.add(new TindakanDecorator(tindakanEvent.getTindakan()));
                 break;
             case DELETE:
                 int index = ComparableCollections.binarySearch(listTindakan, tindakanEvent.getTindakan());
@@ -85,8 +92,8 @@ public class LvTindakan implements Initializable {
             List<Tindakan> deletedTindakan = new ArrayList<>();
             lvTindakan.getSelectionModel().getSelectedItems().forEach(o -> {
                 try {
-                    deletedTindakan.add(o);
-                    tindakanDao.delete(o);
+                    deletedTindakan.add(o.getTindakan());
+                    tindakanDao.delete(o.getTindakan());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -95,4 +102,24 @@ public class LvTindakan implements Initializable {
             Util.showNotif("Sukses", "Tindakan telah dihapus", NotificationType.SUCCESS);
         }
     }
+
+    @Data
+    public class TindakanDecorator implements Comparable {
+        private Tindakan tindakan;
+
+        public TindakanDecorator(Tindakan tindakan) {
+            this.tindakan = tindakan;
+        }
+
+        @Override
+        public String toString() {
+            return this.tindakan.toString_();
+        }
+
+        @Override
+        public int toBeCompared() {
+            return this.tindakan.getId();
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ import com.klinik.dev.enums.FILTERABLE;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.PasienEvent;
+import com.klinik.dev.events.RiwayatTindakanEvent;
 import com.klinik.dev.events.TindakanEvent;
 import com.klinik.dev.util.Util;
 import javafx.collections.FXCollections;
@@ -259,6 +260,7 @@ public class TblSemuaPasien implements Initializable {
                 pasienDao.update(selectedPasien);
                 riwayatTindakans.create(riwayatTindakan);
                 EventBus.getInstance().post(new PasienEvent(selectedPasien, OPERATION_TYPE.UPDATE));
+                EventBus.getInstance().post(new RiwayatTindakanEvent(riwayatTindakan, OPERATION_TYPE.DEFAULT));
                 Util.showNotif("Sukses", "Data pasien telah disimpan", NotificationType.SUCCESS);
             } catch (SQLException e) {
                 Util.showNotif("Error", "Ada kesalahan", NotificationType.ERROR);

@@ -21,7 +21,6 @@ public class Main implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         pasienStage = Util.makeDialogStage(getClass().getResource("/uis/patientdialog.fxml"), "Tambah pasien", App.PRIMARY_STAGE);
         tindakanDanRuleStage = Util.makeDialogStage(getClass().getResource("/uis/tindakanruleformdialog.fxml"), "Tambah rule dan tindakan", App.PRIMARY_STAGE);
-        monitorPemasukanStage = Util.makeDialogStage(getClass().getResource("/uis/monitorpemasukan.fxml"), "Monitor pemasukan", App.PRIMARY_STAGE);
     }
 
     @FXML
@@ -38,7 +37,7 @@ public class Main implements Initializable {
 
     @FXML
     private void showMonitorPemasukan() {
-        if (monitorPemasukanStage != null)
-            monitorPemasukanStage.showAndWait();
+        monitorPemasukanStage = Util.makeDialogStage(getClass().getResource("/uis/monitorpemasukan.fxml"), "Monitor pemasukan", App.PRIMARY_STAGE);
+        monitorPemasukanStage.showAndWait();
     }
 }

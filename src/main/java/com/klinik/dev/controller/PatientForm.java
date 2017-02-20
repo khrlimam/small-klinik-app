@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.App;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Pasien;
 import com.klinik.dev.db.model.RiwayatTindakan;
@@ -148,15 +149,17 @@ public class PatientForm implements Initializable {
     @Subscribe
     public void onTindakan(TindakanEvent tindakanEvent) {
         Tindakan tindakan = tindakanEvent.getTindakan();
+        int index = ComparableCollections.binarySearch(tindakanLists, tindakanEvent.getTindakan());
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case CREATE:
                 tindakanLists.add(tindakan);
                 break;
             case DELETE:
-                tindakanLists.remove(tindakanLists.indexOf(tindakan));
+                if (index > -1)
+                    tindakanLists.remove(index);
                 break;
             case UPDATE:
-                tindakanLists.set(tindakanLists.indexOf(tindakan), tindakan);
+                tindakanLists.set(index, tindakan);
                 break;
         }
     }

@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.contract.OnOkFormContract;
 import com.klinik.dev.customui.NumberTextField;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.db.model.Tindakan;
@@ -67,12 +68,15 @@ public class CheckupDialog implements Initializable {
     @Subscribe
     public void onTindakan(TindakanEvent tindakanEvent) {
         Tindakan tindakan = tindakanEvent.getTindakan();
+        int index = ComparableCollections.binarySearch(listTindakan, tindakanEvent.getTindakan());
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case DELETE:
-                listTindakan.remove(listTindakan.indexOf(tindakan));
+                if (index > -1)
+                    listTindakan.remove(index);
                 break;
             case UPDATE:
-                listTindakan.set(listTindakan.indexOf(tindakan), tindakan);
+                if (index > -1)
+                    listTindakan.set(index, tindakan);
                 break;
             case CREATE:
                 listTindakan.add(tindakan);

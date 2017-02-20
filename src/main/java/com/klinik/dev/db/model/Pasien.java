@@ -75,6 +75,16 @@ public class Pasien implements Comparable {
     }
 
     @Override
+    public String toString() {
+        return String.format("%s, %s, %s", this.noRekamMedis, this.nama, this.tindakan);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
     public int toBeCompared() {
         return this.noRekamMedis;
     }

@@ -4,14 +4,15 @@ import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.App;
+import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.DB;
-import com.klinik.dev.db.model.*;
+import com.klinik.dev.db.model.Pasien;
+import com.klinik.dev.db.model.RiwayatTindakan;
+import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.db.model.TindakanRule;
 import com.klinik.dev.enums.FILTERABLE;
 import com.klinik.dev.enums.OPERATION_TYPE;
-import com.klinik.dev.events.EventBus;
-import com.klinik.dev.events.PasienEvent;
-import com.klinik.dev.events.RiwayatTindakanEvent;
-import com.klinik.dev.events.TindakanEvent;
+import com.klinik.dev.events.*;
 import com.klinik.dev.util.Util;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +31,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.Data;
-import org.joda.time.DateTime;
 import tray.notification.NotificationType;
 
 import java.io.IOException;
@@ -54,6 +54,7 @@ public class TblSemuaPasien implements Initializable {
 
     private ObservableList<Tindakan> tindakanList = FXCollections.observableArrayList(tindakans.queryForAll());
     private ObservableList<Pasien> listPasiens = FXCollections.observableArrayList(pasienDao.queryForAll());
+    private FilteredList<Pasien> pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
 
     private Label label;
 
@@ -64,7 +65,9 @@ public class TblSemuaPasien implements Initializable {
     @FXML
     private TableView<Pasien> tblPasien;
     @FXML
-    private TableColumn<Pasien, String> noRmColumn, namaColumn, tindakanColumn, diagnosisColumn;
+    private TableColumn<Pasien, String> noRmColumn, namaColumn, diagnosisColumn;
+    @FXML
+    private TableColumn<Pasien, Tindakan> tindakanColumn;
     @FXML
     private TableColumn<Pasien, Pasien> jadwalCheckupColumn;
     @FXML
@@ -79,7 +82,7 @@ public class TblSemuaPasien implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         com.klinik.dev.events.EventBus.getInstance().register(this);
         tblPasien.setEditable(true);
-        tblPasien.setItems(sortedListFromTextField());
+        tblPasien.setItems(setSortedListPasien());
         tblPasien.setTooltip(Util.tableControlTooltip());
         StringConverter<LocalDate> dpFilterConverter = new StringConverter<LocalDate>() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Util.DATE_PATTERN);
@@ -108,21 +111,20 @@ public class TblSemuaPasien implements Initializable {
             @Override
             protected void updateItem(Pasien item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null || empty) {
+                if (item == null || empty || item.getTindakan() == null) {
                     setText(null);
                     setStyle("");
                 } else {
-                    // Format date.
                     setText(item.getJadwalSelanjutnya());
-                    for (TindakanRule tindakanRule : item.getTindakan().getTindakanrules()) {
-                        Rule rule = tindakanRule.getRule();
-                        if (rule != null)
-                            if (rule.isMoreThanPeriod(item.getCheckupTerakhir())) {
-                                setStyle("-fx-background-color: #e74c3c");
-                                break;
-                            } else {
-                                setStyle("");
-                            }
+                    boolean isAnyOfJadwalCheckupMoreThanPeriodTime = item.getTindakan().getTindakanrules()
+                            .stream()
+                            .anyMatch(tindakanRule ->
+                                    tindakanRule.getRule() != null &&
+                                            tindakanRule.getRule().isMoreThanPeriod(item.getCheckupTerakhir()));
+                    if (isAnyOfJadwalCheckupMoreThanPeriodTime) {
+                        setStyle("-fx-background-color: #e74c3c");
+                    } else {
+                        setStyle("");
                     }
                 }
             }
@@ -150,8 +152,7 @@ public class TblSemuaPasien implements Initializable {
         });
     }
 
-    private SortedList<Pasien> sortedListFromTextField() {
-        FilteredList<Pasien> pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
+    private SortedList<Pasien> setSortedListPasien() {
         lblFilterTable.textProperty().addListener((observable, oldValue, newValue) -> pasienFilteredList.setPredicate(pasien -> {
             String[] whatFieldToFilter = newValue.split(",");
             if (newValue == null || newValue.isEmpty())
@@ -162,9 +163,8 @@ public class TblSemuaPasien implements Initializable {
                 return true;
             else if (pasien.getJadwalSelanjutnya().contains(whatFieldToFilter[0]) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_TANGGAL.name()))
                 return true;
-            else if (pasien.getTindakan().toString().contains(whatFieldToFilter[0]) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_TINDAKAN.name()))
+            else if (pasien.getTindakan() != null && pasien.getTindakan().toString().contains(whatFieldToFilter[0]) && whatFieldToFilter[1].equals(FILTERABLE.FILTER_BY_TINDAKAN.name()))
                 return true;
-
             return false;
         }));
         SortedList<Pasien> pasienSortedList = new SortedList<>(pasienFilteredList);
@@ -173,7 +173,8 @@ public class TblSemuaPasien implements Initializable {
 
     public void overrideItems(List<Pasien> pasiens) {
         listPasiens = FXCollections.observableArrayList(pasiens);
-        tblPasien.setItems(sortedListFromTextField());
+        pasienFilteredList = new FilteredList<>(listPasiens, pasien -> true);
+        tblPasien.setItems(setSortedListPasien());
     }
 
     public void onKeyPressed(KeyEvent keyEvent) throws SQLException, IOException {
@@ -205,12 +206,22 @@ public class TblSemuaPasien implements Initializable {
     @Subscribe
     public void onTindakan(TindakanEvent tindakanEvent) {
         Tindakan tindakan = tindakanEvent.getTindakan();
+        int index = ComparableCollections.binarySearch(tindakanList, tindakanEvent.getTindakan());
         switch (tindakanEvent.getOPERATION_TYPE()) {
             case UPDATE:
-                tindakanList.set(tindakanList.indexOf(tindakan), tindakan);
+                if (index > -1)
+                    tindakanList.set(index, tindakan);
                 break;
             case DELETE:
-                tindakanList.remove(tindakanList.indexOf(tindakan));
+                if (index > -1) {
+                    listPasiens.stream()
+                            .filter(pasien -> pasien.getTindakan() != null && pasien.getTindakan().getId() == tindakanEvent.getTindakan().getId())
+                            .forEach(pasien -> {
+                                pasien.setTindakan(null);
+                            });
+                    listPasiens.forEach(pasien -> EventBus.getInstance().post(new PasienEvent(pasien, OPERATION_TYPE.UPDATE)));
+                    tindakanList.remove(index);
+                }
                 break;
             case CREATE:
                 tindakanList.add(tindakan);

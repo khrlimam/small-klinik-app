@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0"
-            prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.klinik.dev.controller.TindakanAndRuleFormDialog">
     <children>
         <VBox layoutX="35.0" layoutY="14.0" prefHeight="485.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0"
@@ -25,13 +24,34 @@
                         </Label>
                     </children>
                 </Pane>
-                <HBox prefHeight="433.0" prefWidth="400.0">
-                    <children>
-                        <fx:include fx:id="ruleForm" source="ruleform.fxml"/>
-                        <Separator orientation="VERTICAL" prefHeight="200.0"/>
-                        <fx:include fx:id="tindakanForm" source="tindakanform.fxml"/>
-                    </children>
-                </HBox>
+                <TabPane prefHeight="436.0" prefWidth="612.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="Tambah Tindakan dan Rule">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <children>
+                                        <HBox prefHeight="433.0" prefWidth="400.0">
+                                            <children>
+                                                <fx:include fx:id="ruleForm" source="ruleform.fxml"/>
+                                                <Separator orientation="VERTICAL" prefHeight="200.0"/>
+                                                <fx:include fx:id="tindakanForm" source="tindakanform.fxml"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                        <Tab text="List Tindakan">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="427.0" prefWidth="612.0">
+                                    <children>
+                                        <fx:include source="lvtindakan.fxml"/>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
             </children>
         </VBox>
     </children>

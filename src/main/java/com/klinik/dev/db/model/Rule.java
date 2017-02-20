@@ -5,6 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.util.Log;
 import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;

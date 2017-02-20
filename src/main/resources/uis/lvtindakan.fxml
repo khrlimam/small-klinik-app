@@ -15,7 +15,8 @@
                         <Insets bottom="10.0"/>
                     </VBox.margin>
                 </Button>
-                <ListView fx:id="lvTindakan" onKeyPressed="#onKeyPressed" AnchorPane.bottomAnchor="0.0"
+                <ListView fx:id="lvTindakan" style="-fx-font-size: 14px" onKeyPressed="#onKeyPressed"
+                          AnchorPane.bottomAnchor="0.0"
                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             </children>
         </VBox>

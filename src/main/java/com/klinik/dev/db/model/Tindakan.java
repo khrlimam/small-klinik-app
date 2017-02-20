@@ -30,8 +30,9 @@ public class Tindakan implements Comparable {
 
     public String toString_() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getNamaTindakan());
-        tindakanrules.forEach(tindakanRule -> stringBuilder.append(", "+tindakanRule.getRule()));
+        stringBuilder.append(getNamaTindakan()+":\n");
+        tindakanrules.forEach(tindakanRule -> stringBuilder.append(tindakanRule.getRule()+", "));
+        stringBuilder.replace(stringBuilder.length()-2, stringBuilder.length(), "");
         return stringBuilder.toString();
     }
 

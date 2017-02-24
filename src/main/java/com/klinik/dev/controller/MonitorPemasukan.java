@@ -78,13 +78,13 @@ public class MonitorPemasukan implements Initializable {
     }
 
     private void populatePendapatanAndTransaksiRiwayatTindakanSetiapTahun() {
-        pendapatanSetiapTahun = all.stream()
+        pendapatanSetiapTahun = all.stream().parallel()
                 .collect(Collectors
                         .groupingBy(RiwayatTindakan::getYear,
                                 Collectors.groupingBy(RiwayatTindakan::getMonth,
                                         Collectors.summingDouble(RiwayatTindakan::getTarif)
                                 )));
-        riwayatTindakanPerbulan = all.stream()
+        riwayatTindakanPerbulan = all.stream().parallel()
                 .collect(Collectors
                         .groupingBy(RiwayatTindakan::getYear,
                                 Collectors.groupingBy(RiwayatTindakan::getMonth)));

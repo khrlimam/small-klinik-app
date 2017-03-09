@@ -50,9 +50,9 @@ import java.util.ResourceBundle;
 @Data
 public class TblSemuaPasien implements Initializable {
 
-    private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
-    private Dao<Tindakan, Integer> tindakans = DaoManager.createDao(DB.getDB(), Tindakan.class);
-    private Dao<RiwayatTindakan, Integer> riwayatTindakans = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
+    private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
+    private Dao<Tindakan, Integer> tindakans = Tindakan.getDao();
+    private Dao<RiwayatTindakan, Integer> riwayatTindakans = RiwayatTindakan.getDao();
 
     private ObservableList<Tindakan> tindakanList = FXCollections.observableArrayList(tindakans.queryForAll());
     private ObservableList<Pasien> listPasiens = FXCollections.observableArrayList(pasienDao.queryForAll());

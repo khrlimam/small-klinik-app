@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 @Data
 public class TindakanAndRuleFormDialog implements Initializable {
 
-    private Dao ruleDao = DaoManager.createDao(DB.getDB(), Rule.class);
-    private Dao tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
-    private Dao<TindakanRule, Void> tindakanRuleDao = DaoManager.createDao(DB.getDB(), TindakanRule.class);
+    private Dao ruleDao = Rule.getDao();
+    private Dao tindakanDao = Tindakan.getDao();
+    private Dao<TindakanRule, Void> tindakanRuleDao = TindakanRule.getDao();
 
     public enum METODE {
         SIMPAN_RULE,

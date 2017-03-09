@@ -1,12 +1,17 @@
 package com.klinik.dev.db.model;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.db.DB;
 import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;
+
+import java.sql.SQLException;
 
 /**
  * Created by khairulimam on 25/01/17.
@@ -38,6 +43,15 @@ public class RiwayatTindakan implements Comparable {
 
     public String getTanggal() {
         return tglCheckup.toString(String.format(Util.DATE_TIME_PATTERN));
+    }
+
+    public static Dao<RiwayatTindakan, Integer> getDao() {
+        try {
+            return DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public int getYear() {

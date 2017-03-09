@@ -28,8 +28,8 @@ import java.util.ResourceBundle;
 @Data
 public class PatientFormDialog implements Initializable, OnOkFormContract {
 
-    private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
-    private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
+    private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
+    private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = RiwayatTindakan.getDao();
 
     @FXML
     PatientForm patientFormController;

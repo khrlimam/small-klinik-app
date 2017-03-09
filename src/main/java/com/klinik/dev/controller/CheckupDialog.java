@@ -40,7 +40,7 @@ public class CheckupDialog implements Initializable {
     @FXML
     private TextArea taDiagnosis;
 
-    private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
+    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
     private ObservableList listTindakan = FXCollections.observableArrayList(tindakanDao.queryForAll());
 
     public CheckupDialog() throws SQLException {

@@ -44,7 +44,7 @@ public class MonitorPemasukan implements Initializable {
     @FXML
     private NumberAxis xAxis, yAxis;
 
-    private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
+    private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = RiwayatTindakan.getDao();
     private List<RiwayatTindakan> all = riwayatTindakanDao.queryForAll();
     private ObservableList<XYChart.Series<Number, Number>> chartSeries;
     private Map<Integer, Map<Integer, Double>> pendapatanSetiapTahun;

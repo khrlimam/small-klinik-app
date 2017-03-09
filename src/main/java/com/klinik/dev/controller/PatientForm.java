@@ -46,7 +46,7 @@ public class PatientForm implements Initializable {
     private OnOkFormContract formContract;
     private FileChooser fileChooser = new FileChooser();
 
-    private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
+    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
     private ObservableList<Tindakan> tindakanLists = FXCollections.observableArrayList(tindakanDao.queryForAll());
 
 

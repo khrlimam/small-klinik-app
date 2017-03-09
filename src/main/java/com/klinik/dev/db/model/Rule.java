@@ -1,10 +1,13 @@
 package com.klinik.dev.db.model;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.db.DB;
 import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;
@@ -12,6 +15,7 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 
 /**
  * Created by khairulimam on 29/01/17.
@@ -49,11 +53,19 @@ public class Rule implements Comparable, Serializable {
         return (deltaDay > 0);
     }
 
+    public static Dao<Rule, Integer> getDao() {
+        try {
+            return DaoManager.createDao(DB.getDB(), Rule.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("%s (%d hari)", getRuleName(), getIntervalDays());
     }
-
 
     @Override
     public int toBeCompared() {

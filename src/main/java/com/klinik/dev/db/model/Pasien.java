@@ -1,16 +1,21 @@
 package com.klinik.dev.db.model;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.klinik.dev.contract.Comparable;
+import com.klinik.dev.db.DB;
 import com.klinik.dev.enums.STATUS;
 import com.klinik.dev.util.Util;
 import lombok.Data;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+
+import java.sql.SQLException;
 
 /**
  * Created by khairulimam on 23/01/17.
@@ -72,6 +77,15 @@ public class Pasien implements Comparable {
                 stringBuilder.append(String.format("%s, %s\n", rule.getRuleName(), rule.toStringDate(checkupTerakhir)));
         });
         return stringBuilder.toString();
+    }
+
+    public static Dao<Pasien, Integer> getDao() {
+        try {
+            return DaoManager.createDao(DB.getDB(), Pasien.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

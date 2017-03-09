@@ -69,9 +69,9 @@ public class Util {
 
 
     void generateData() throws SQLException {
-        Dao<Pasien, Integer> pd = DaoManager.createDao(DB.getDB(), Pasien.class);
-        Dao<RiwayatTindakan, Integer> rd = DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
-        Dao<Tindakan, Integer> td = DaoManager.createDao(DB.getDB(), Tindakan.class);
+        Dao<Pasien, Integer> pd = Pasien.getDao();
+        Dao<RiwayatTindakan, Integer> rd = RiwayatTindakan.getDao();
+        Dao<Tindakan, Integer> td = Tindakan.getDao();
         Tindakan t = td.queryBuilder().queryForFirst();
         double pen = 50000;
         DateTime initDate = DateTime.now().plusYears(1);

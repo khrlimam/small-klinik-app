@@ -54,7 +54,7 @@ public class ShowPatient implements Initializable {
     private Pasien pasien;
     private ObservableList<RiwayatTindakan> riwayatTindakans;
     private FileChooser fileChooser;
-    private Dao<Pasien, Integer> pasienDao = DaoManager.createDao(DB.getDB(), Pasien.class);
+    private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
 
     private Image fotoProfile = new Image(getClass().getResourceAsStream("/foto/default.png"));
 

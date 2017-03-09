@@ -39,9 +39,9 @@ public class TindakanForm implements Initializable {
 
     private OnOkFormContract onOkFormContract;
 
-    private Dao<Rule, Integer> ruleDao = DaoManager.createDao(DB.getDB(), Rule.class);
-    private Dao<Tindakan, Integer> tindakanDao = DaoManager.createDao(DB.getDB(), Tindakan.class);
-    private Dao<TindakanRule, Void> tindakanRuleDao = DaoManager.createDao(DB.getDB(), TindakanRule.class);
+    private Dao<Rule, Integer> ruleDao = Rule.getDao();
+    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
+    private Dao<TindakanRule, Void> tindakanRuleDao = TindakanRule.getDao();
 
     private ObservableList<Rule> ruleLists = FXCollections.observableArrayList(ruleDao.queryForAll());
 

@@ -2,10 +2,8 @@ package com.klinik.dev.controller;
 
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.contract.Comparable;
 import com.klinik.dev.datastructure.ComparableCollections;
-import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.Tindakan;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
@@ -90,10 +88,10 @@ public class LvTindakan implements Initializable {
         boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
         if (isOK) {
             List<Tindakan> deletedTindakan = new ArrayList<>();
-            lvTindakan.getSelectionModel().getSelectedItems().forEach(o -> {
+            lvTindakan.getSelectionModel().getSelectedItems().forEach(tindakanDecorator -> {
                 try {
-                    deletedTindakan.add(o.getTindakan());
-                    tindakanDao.delete(o.getTindakan());
+                    deletedTindakan.add(tindakanDecorator.getTindakan());
+                    tindakanDao.delete(tindakanDecorator.getTindakan());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

@@ -2,9 +2,7 @@ package com.klinik.dev.controller;
 
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.klinik.dev.customui.HoveredLineChartNode;
-import com.klinik.dev.db.DB;
 import com.klinik.dev.db.model.RiwayatTindakan;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.RiwayatTindakanEvent;

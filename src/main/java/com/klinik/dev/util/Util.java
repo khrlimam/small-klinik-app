@@ -1,7 +1,6 @@
 package com.klinik.dev.util;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.klinik.dev.db.DB;

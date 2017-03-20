@@ -2,9 +2,9 @@ package com.klinik.dev.controller;
 
 import com.google.common.eventbus.Subscribe;
 import com.j256.ormlite.dao.Dao;
-import com.klinik.dev.contract.Comparable;
 import com.klinik.dev.datastructure.ComparableCollections;
 import com.klinik.dev.db.model.Tindakan;
+import com.klinik.dev.decorator.TindakanDecorator;
 import com.klinik.dev.enums.OPERATION_TYPE;
 import com.klinik.dev.events.EventBus;
 import com.klinik.dev.events.TindakanEvent;
@@ -23,10 +23,10 @@ import tray.notification.NotificationType;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Created by khairulimam on 20/02/17.
@@ -87,37 +87,25 @@ public class LvTindakan implements Initializable {
         Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
         boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
         if (isOK) {
-            List<Tindakan> deletedTindakan = new ArrayList<>();
-            lvTindakan.getSelectionModel().getSelectedItems().forEach(tindakanDecorator -> {
-                try {
-                    deletedTindakan.add(tindakanDecorator.getTindakan());
-                    tindakanDao.delete(tindakanDecorator.getTindakan());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
-            deletedTindakan.forEach(tindakan -> EventBus.getInstance().post(new TindakanEvent(tindakan, OPERATION_TYPE.DELETE)));
+            List<TindakanDecorator> collectedDeletedTindakan = lvTindakan
+                    .getSelectionModel()
+                    .getSelectedItems()
+                    .stream()
+                    .filter(tindakanDecorator -> {
+                        try {
+                            int deleted = tindakanDao.delete(tindakanDecorator.getTindakan());
+                            return deleted == 1;
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }).collect(Collectors.toList());
+            collectedDeletedTindakan
+                    .forEach(tindakanDecorator ->
+                            EventBus
+                                    .getInstance()
+                                    .post(new TindakanEvent(tindakanDecorator.getTindakan(), OPERATION_TYPE.DELETE)));
             Util.showNotif("Sukses", "Tindakan telah dihapus", NotificationType.SUCCESS);
         }
     }
-
-    @Data
-    public class TindakanDecorator implements Comparable {
-        private Tindakan tindakan;
-
-        public TindakanDecorator(Tindakan tindakan) {
-            this.tindakan = tindakan;
-        }
-
-        @Override
-        public String toString() {
-            return this.tindakan.toString_();
-        }
-
-        @Override
-        public int toBeCompared() {
-            return this.tindakan.getId();
-        }
-    }
-
 }

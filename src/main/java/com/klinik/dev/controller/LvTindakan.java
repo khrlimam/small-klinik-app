@@ -70,8 +70,8 @@ public class LvTindakan implements Initializable {
     }
 
     @FXML
-    private void onKeyPressed(KeyEvent event) {
-        switch (event.getCode()) {
+    private void onKeyPressed(KeyEvent keyEvent) {
+        switch (keyEvent.getCode()) {
             case D:
                 deleteTindakanItems();
                 break;
@@ -100,6 +100,7 @@ public class LvTindakan implements Initializable {
                             return false;
                         }
                     }).collect(Collectors.toList());
+
             collectedDeletedTindakan
                     .forEach(tindakanDecorator ->
                             EventBus

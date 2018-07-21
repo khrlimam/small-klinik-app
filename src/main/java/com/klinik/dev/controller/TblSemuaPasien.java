@@ -389,7 +389,7 @@ public class TblSemuaPasien implements Initializable {
       row.put(NO_REKAM_MEDIS_FIELD_NAME, pasien.getNoRekamMedis());
       row.put(NAMA_FIELD_NAME, pasien.getNama());
       row.put(TINDAKAN_FIELD_NAME, pasien.getTindakan().toString());
-      row.put(DIAGNOSIS_FIELD_NAME, pasien.getDiagnosis().toString());
+      row.put(DIAGNOSIS_FIELD_NAME, pasien.getDiagnosis());
       data.add(row);
     });
     return data;

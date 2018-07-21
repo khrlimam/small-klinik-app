@@ -40,85 +40,85 @@ import java.util.ResourceBundle;
 @Data
 public class ShowPatient implements Initializable {
 
-    @FXML
-    private Label lblNoRm, lblNama, lblUmur, lblNoTelepon, lblAlamat, lblPekerjaan, lblTglRegistrasi;
-    @FXML
-    private ImageView ivPatient;
-    @FXML
-    TableView tblRiwayatTindakan;
-    @FXML
-    TableColumn<RiwayatTindakan, String> tanggalColumn, tindakanColumn, diagnosisColumn;
+  @FXML
+  private Label lblNoRm, lblNama, lblUmur, lblNoTelepon, lblAlamat, lblPekerjaan, lblTglRegistrasi;
+  @FXML
+  private ImageView ivPatient;
+  @FXML
+  TableView tblRiwayatTindakan;
+  @FXML
+  TableColumn<RiwayatTindakan, String> tanggalColumn, tindakanColumn, diagnosisColumn;
 
-    private Pasien pasien;
-    private ObservableList<RiwayatTindakan> riwayatTindakans;
-    private FileChooser fileChooser;
-    private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
+  private Pasien pasien;
+  private ObservableList<RiwayatTindakan> riwayatTindakans;
+  private FileChooser fileChooser;
+  private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
 
-    private Image fotoProfile = new Image(getClass().getResourceAsStream("/foto/default.png"));
+  private Image fotoProfile = new Image(getClass().getResourceAsStream("/foto/default.png"));
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    ivPatient.setImage(fotoProfile);
+    fileChooser = new FileChooser();
+    fileChooser.setTitle("Pilih gambar");
+    fileChooser.getExtensionFilters().add(FileUtil.ALLOWED_IMAGE);
+  }
+
+  public ShowPatient() throws SQLException {
+  }
+
+  public void reinitialize(Pasien pasien) throws FileNotFoundException {
+    this.pasien = pasien;
+    lblNama.setText(pasien.getNama());
+    lblNoRm.setText(String.format("RM%04d", pasien.getNoRekamMedis()));
+    int age = LocalDate.now().getYear() - pasien.getTglLahir().getYear();
+    lblUmur.setText(String.format("%d tahun", age));
+    lblNoTelepon.setText(pasien.getNoTelepon());
+    lblAlamat.setText(pasien.getAlamat());
+    lblPekerjaan.setText(pasien.getPekerjaan());
+    lblTglRegistrasi.setText(pasien.getTglRegisterToString());
+    String fotoProfilePath = pasien.getFotoPath();
+    if (fotoProfilePath != null) {
+      fotoProfile = new Image(new FileInputStream(new File(fotoProfilePath)));
+      ivPatient.setImage(fotoProfile);
+    }
+    riwayatTindakans = FXCollections.observableArrayList(pasien.getRiwayatTindakans());
+    tblRiwayatTindakan.setItems(riwayatTindakans);
+    setupColumn();
+  }
+
+  private void setupColumn() {
+    tanggalColumn.setCellValueFactory(new PropertyValueFactory<>("tanggal"));
+    tindakanColumn.setCellValueFactory(new PropertyValueFactory<>("tindakan"));
+    diagnosisColumn.setCellValueFactory(new PropertyValueFactory<>("diagnosis"));
+  }
+
+  public void gantiGambar() throws SQLException {
+    if (pasien != null) {
+      try {
+        File fileSrcFile = fileChooser.showOpenDialog(App.PRIMARY_STAGE);
+        Magic.getMagicMatch(fileSrcFile, false).getMimeType();
+        String fileExtension = Files.getFileExtension(fileSrcFile.getName());
+        File fileDestination = FileUtil.generateFileToUploadFolder(fileExtension);
+        FileUtil.uploadFile(fileSrcFile, fileDestination);
+        pasien.setFotoPath(fileDestination.getAbsolutePath());
+        pasienDao.update(pasien);
+        fotoProfile = new Image(new FileInputStream(fileDestination));
         ivPatient.setImage(fotoProfile);
-        fileChooser = new FileChooser();
-        fileChooser.setTitle("Pilih gambar");
-        fileChooser.getExtensionFilters().add(FileUtil.ALLOWED_IMAGE);
+        Util.showNotif("Sukses", "Gambar telah diganti", NotificationType.SUCCESS);
+      } catch (MagicParseException e) {
+        Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getCause()), NotificationType.ERROR);
+        e.printStackTrace();
+      } catch (MagicMatchNotFoundException e) {
+        Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getCause()), NotificationType.ERROR);
+        e.printStackTrace();
+      } catch (MagicException e) {
+        Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getCause()), NotificationType.ERROR);
+        e.printStackTrace();
+      } catch (IOException e) {
+        Util.showNotif("Error", String.format("Gambar tidak bisa dibuka! %s", e.getCause()), NotificationType.ERROR);
+        e.printStackTrace();
+      }
     }
-
-    public ShowPatient() throws SQLException {
-    }
-
-    public void reinitialize(Pasien pasien) throws FileNotFoundException {
-        this.pasien = pasien;
-        lblNama.setText(pasien.getNama());
-        lblNoRm.setText(String.format("RM%04d", pasien.getNoRekamMedis()));
-        int age = LocalDate.now().getYear() - pasien.getTglLahir().getYear();
-        lblUmur.setText(String.format("%d tahun", age));
-        lblNoTelepon.setText(pasien.getNoTelepon());
-        lblAlamat.setText(pasien.getAlamat());
-        lblPekerjaan.setText(pasien.getPekerjaan());
-        lblTglRegistrasi.setText(pasien.getTglRegisterToString());
-        String fotoProfilePath = pasien.getFotoPath();
-        if (fotoProfilePath != null) {
-            fotoProfile = new Image(new FileInputStream(new File(fotoProfilePath)));
-            ivPatient.setImage(fotoProfile);
-        }
-        riwayatTindakans = FXCollections.observableArrayList(pasien.getRiwayatTindakans());
-        tblRiwayatTindakan.setItems(riwayatTindakans);
-        setupColumn();
-    }
-
-    private void setupColumn() {
-        tanggalColumn.setCellValueFactory(new PropertyValueFactory<>("tanggal"));
-        tindakanColumn.setCellValueFactory(new PropertyValueFactory<>("tindakan"));
-        diagnosisColumn.setCellValueFactory(new PropertyValueFactory<>("diagnosis"));
-    }
-
-    public void gantiGambar() throws SQLException {
-        if (pasien != null) {
-            try {
-                File fileSrcFile = fileChooser.showOpenDialog(App.PRIMARY_STAGE);
-                Magic.getMagicMatch(fileSrcFile, false).getMimeType();
-                String fileExtension = Files.getFileExtension(fileSrcFile.getName());
-                File fileDestination = FileUtil.generateFileToUploadFolder(fileExtension);
-                FileUtil.uploadFile(fileSrcFile, fileDestination);
-                pasien.setFotoPath(fileDestination.getAbsolutePath());
-                pasienDao.update(pasien);
-                fotoProfile = new Image(new FileInputStream(fileDestination));
-                ivPatient.setImage(fotoProfile);
-                Util.showNotif("Sukses", "Gambar telah diganti", NotificationType.SUCCESS);
-            } catch (MagicParseException e) {
-                Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getCause()), NotificationType.ERROR);
-                e.printStackTrace();
-            } catch (MagicMatchNotFoundException e) {
-                Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getCause()), NotificationType.ERROR);
-                e.printStackTrace();
-            } catch (MagicException e) {
-                Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getCause()), NotificationType.ERROR);
-                e.printStackTrace();
-            } catch (IOException e) {
-                Util.showNotif("Error", String.format("Gambar tidak bisa dibuka! %s", e.getCause()), NotificationType.ERROR);
-                e.printStackTrace();
-            }
-        }
-    }
+  }
 }

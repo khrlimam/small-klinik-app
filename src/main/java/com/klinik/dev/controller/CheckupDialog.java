@@ -29,69 +29,69 @@ import java.util.ResourceBundle;
 @Data
 public class CheckupDialog implements Initializable {
 
-    private OnOkFormContract onOkFormContract;
+  private OnOkFormContract onOkFormContract;
 
-    @FXML
-    private ChoiceBox<Tindakan> cbTindakan;
-    @FXML
-    private NumberTextField tfTarif;
-    @FXML
-    private TextArea taDiagnosis;
+  @FXML
+  private ChoiceBox<Tindakan> cbTindakan;
+  @FXML
+  private NumberTextField tfTarif;
+  @FXML
+  private TextArea taDiagnosis;
 
-    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
-    private ObservableList listTindakan = FXCollections.observableArrayList(tindakanDao.queryForAll());
+  private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
+  private ObservableList listTindakan = FXCollections.observableArrayList(tindakanDao.queryForAll());
 
-    public CheckupDialog() throws SQLException {
+  public CheckupDialog() throws SQLException {
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    EventBus.getInstance().register(this);
+    cbTindakan.setItems(listTindakan);
+    cbTindakan.getSelectionModel().select(0);
+  }
+
+  public Tindakan getTindakan() {
+    return cbTindakan.getSelectionModel().getSelectedItem();
+  }
+
+  public RiwayatTindakan getRiwayatTindakan() {
+    RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
+    riwayatTindakan.setDiagnosis(taDiagnosis.getText());
+    riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
+    riwayatTindakan.setTglCheckup(DateTime.now());
+    return riwayatTindakan;
+  }
+
+  @Subscribe
+  public void onTindakan(TindakanEvent tindakanEvent) {
+    Tindakan tindakan = tindakanEvent.getTindakan();
+    int index = ComparableCollections.binarySearch(listTindakan, tindakanEvent.getTindakan());
+    switch (tindakanEvent.getOPERATION_TYPE()) {
+      case DELETE:
+        if (index > -1)
+          listTindakan.remove(index);
+        break;
+      case UPDATE:
+        if (index > -1)
+          listTindakan.set(index, tindakan);
+        break;
+      case CREATE:
+        listTindakan.add(tindakan);
+        break;
     }
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        EventBus.getInstance().register(this);
-        cbTindakan.setItems(listTindakan);
-        cbTindakan.getSelectionModel().select(0);
+  public void onOk(ActionEvent event) {
+    if (onOkFormContract != null) {
+      onOkFormContract.onPositive();
+      resetForm();
     }
+  }
 
-    public Tindakan getTindakan() {
-        return cbTindakan.getSelectionModel().getSelectedItem();
-    }
-
-    public RiwayatTindakan getRiwayatTindakan() {
-        RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
-        riwayatTindakan.setDiagnosis(taDiagnosis.getText());
-        riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
-        riwayatTindakan.setTglCheckup(DateTime.now());
-        return riwayatTindakan;
-    }
-
-    @Subscribe
-    public void onTindakan(TindakanEvent tindakanEvent) {
-        Tindakan tindakan = tindakanEvent.getTindakan();
-        int index = ComparableCollections.binarySearch(listTindakan, tindakanEvent.getTindakan());
-        switch (tindakanEvent.getOPERATION_TYPE()) {
-            case DELETE:
-                if (index > -1)
-                    listTindakan.remove(index);
-                break;
-            case UPDATE:
-                if (index > -1)
-                    listTindakan.set(index, tindakan);
-                break;
-            case CREATE:
-                listTindakan.add(tindakan);
-                break;
-        }
-    }
-
-    public void onOk(ActionEvent event) {
-        if (onOkFormContract != null) {
-            onOkFormContract.onPositive();
-            resetForm();
-        }
-    }
-
-    private void resetForm() {
-        cbTindakan.getSelectionModel().select(0);
-        tfTarif.setText("");
-        taDiagnosis.setText("");
-    }
+  private void resetForm() {
+    cbTindakan.getSelectionModel().select(0);
+    tfTarif.setText("");
+    taDiagnosis.setText("");
+  }
 }

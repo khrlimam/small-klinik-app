@@ -23,83 +23,83 @@ import java.sql.SQLException;
 @DatabaseTable(tableName = "pasien")
 @Data
 public class Pasien implements Comparable {
-    @DatabaseField(generatedId = true, width = 4)
-    private int noRekamMedis;
-    @DatabaseField(width = 30)
-    private String nama;
-    @DatabaseField(dataType = DataType.DATE_TIME)
-    private DateTime tglLahir;
-    @DatabaseField
-    private String alamat;
-    @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "BELUM_MENIKAH", width = 20)
-    private STATUS status;
-    @DatabaseField(width = 15)
-    private String noTelepon;
-    @DatabaseField(width = 20)
-    private String pekerjaan;
-    @DatabaseField(dataType = DataType.DATE_TIME)
-    private DateTime tglRegister;
-    @DatabaseField(dataType = DataType.DATE_TIME)
-    private DateTime checkupTerakhir;
-    @DatabaseField
-    private String diagnosis;
-    @DatabaseField
-    private String fotoPath;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
-    private Tindakan tindakan;
-    @ForeignCollectionField
-    private ForeignCollection<RiwayatTindakan> riwayatTindakans;
+  @DatabaseField(generatedId = true, width = 4)
+  private int noRekamMedis;
+  @DatabaseField(width = 30)
+  private String nama;
+  @DatabaseField(dataType = DataType.DATE_TIME)
+  private DateTime tglLahir;
+  @DatabaseField
+  private String alamat;
+  @DatabaseField(dataType = DataType.ENUM_STRING, unknownEnumName = "BELUM_MENIKAH", width = 20)
+  private STATUS status;
+  @DatabaseField(width = 15)
+  private String noTelepon;
+  @DatabaseField(width = 20)
+  private String pekerjaan;
+  @DatabaseField(dataType = DataType.DATE_TIME)
+  private DateTime tglRegister;
+  @DatabaseField(dataType = DataType.DATE_TIME)
+  private DateTime checkupTerakhir;
+  @DatabaseField
+  private String diagnosis;
+  @DatabaseField
+  private String fotoPath;
+  @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
+  private Tindakan tindakan;
+  @ForeignCollectionField
+  private ForeignCollection<RiwayatTindakan> riwayatTindakans;
 
-    public DateTime getCheckupTerakhir() {
-        return checkupTerakhir.withTimeAtStartOfDay();
-    }
+  public DateTime getCheckupTerakhir() {
+    return checkupTerakhir.withTimeAtStartOfDay();
+  }
 
-    public String getTglRegisterToString() {
-        return this.tglRegister.toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
-    }
+  public String getTglRegisterToString() {
+    return this.tglRegister.toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
+  }
 
-    public DateTime getCheckupTerakhirActualDate() {
-        return this.checkupTerakhir;
-    }
+  public DateTime getCheckupTerakhirActualDate() {
+    return this.checkupTerakhir;
+  }
 
-    public Pasien getPasien() {
-        return this;
-    }
+  public Pasien getPasien() {
+    return this;
+  }
 
-    public String getJadwalSelanjutnya() {
-        if (tindakan == null)
-            return "";
-        StringBuilder stringBuilder = new StringBuilder();
-        ForeignCollection<TindakanRule> rules = tindakan.getTindakanrules();
-        rules.forEach(tindakanRule -> {
-            Rule rule = tindakanRule.getRule();
-            if (rule != null)
-                stringBuilder.append(String.format("%s, %s\n", rule.getRuleName(), rule.toStringDate(checkupTerakhir)));
-        });
-        return stringBuilder.toString();
-    }
+  public String getJadwalSelanjutnya() {
+    if (tindakan == null)
+      return "";
+    StringBuilder stringBuilder = new StringBuilder();
+    ForeignCollection<TindakanRule> rules = tindakan.getTindakanrules();
+    rules.forEach(tindakanRule -> {
+      Rule rule = tindakanRule.getRule();
+      if (rule != null)
+        stringBuilder.append(String.format("%s, %s\n", rule.getRuleName(), rule.toStringDate(checkupTerakhir)));
+    });
+    return stringBuilder.toString();
+  }
 
-    public static Dao<Pasien, Integer> getDao() {
-        try {
-            return DaoManager.createDao(DB.getDB(), Pasien.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+  public static Dao<Pasien, Integer> getDao() {
+    try {
+      return DaoManager.createDao(DB.getDB(), Pasien.class);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 
-    @Override
-    public String toString() {
-        return String.format("%s, %s, %s", this.noRekamMedis, this.nama, this.tindakan);
-    }
+  @Override
+  public String toString() {
+    return String.format("%s, %s, %s", this.noRekamMedis, this.nama, this.tindakan);
+  }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 
-    @Override
-    public int toBeCompared() {
-        return this.noRekamMedis;
-    }
+  @Override
+  public int toBeCompared() {
+    return this.noRekamMedis;
+  }
 }

@@ -23,52 +23,52 @@ import java.sql.SQLException;
 @DatabaseTable(tableName = "rule")
 @Data
 public class Rule implements Comparable, Serializable {
-    @DatabaseField(generatedId = true)
-    private int id;
-    @DatabaseField(width = 20)
-    private String ruleName;
-    @DatabaseField
-    private int intervalDays;
-    @ForeignCollectionField
-    private ForeignCollection<TindakanRule> tindakanRules;
+  @DatabaseField(generatedId = true)
+  private int id;
+  @DatabaseField(width = 20)
+  private String ruleName;
+  @DatabaseField
+  private int intervalDays;
+  @ForeignCollectionField
+  private ForeignCollection<TindakanRule> tindakanRules;
 
-    public DateTime getNextCheckUp(DateTime lastCheckup) {
-        return lastCheckup.plusDays(this.intervalDays);
-    }
+  public DateTime getNextCheckUp(DateTime lastCheckup) {
+    return lastCheckup.plusDays(this.intervalDays);
+  }
 
-    public boolean isTodayCheckup(DateTime lastCheckup) {
-        return getNextCheckUp(lastCheckup)
-                .isEqual(lastCheckup);
-    }
+  public boolean isTodayCheckup(DateTime lastCheckup) {
+    return getNextCheckUp(lastCheckup)
+        .isEqual(lastCheckup);
+  }
 
-    public String toStringDate(DateTime lastCheckup) {
-        return getNextCheckUp(lastCheckup).toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
-    }
+  public String toStringDate(DateTime lastCheckup) {
+    return getNextCheckUp(lastCheckup).toString(DateTimeFormat.forPattern(Util.DATE_PATTERN));
+  }
 
-    public boolean isMoreThanPeriod(DateTime lastCheckup) {
-        int daysAbsenceFromNextCheckup = getIntervalDays() * Util.MAX_TIME_ABSENCE;
-        DateTime now = DateTime.now().withTimeAtStartOfDay();
-        DateTime absenceDay = lastCheckup.plusDays(daysAbsenceFromNextCheckup);
-        int deltaDay = Days.daysBetween(absenceDay, now).getDays();
-        return (deltaDay > 0);
-    }
+  public boolean isMoreThanPeriod(DateTime lastCheckup) {
+    int daysAbsenceFromNextCheckup = getIntervalDays() * Util.MAX_TIME_ABSENCE;
+    DateTime now = DateTime.now().withTimeAtStartOfDay();
+    DateTime absenceDay = lastCheckup.plusDays(daysAbsenceFromNextCheckup);
+    int deltaDay = Days.daysBetween(absenceDay, now).getDays();
+    return (deltaDay > 0);
+  }
 
-    public static Dao<Rule, Integer> getDao() {
-        try {
-            return DaoManager.createDao(DB.getDB(), Rule.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+  public static Dao<Rule, Integer> getDao() {
+    try {
+      return DaoManager.createDao(DB.getDB(), Rule.class);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 
-    @Override
-    public String toString() {
-        return String.format("%s (%d hari)", getRuleName(), getIntervalDays());
-    }
+  @Override
+  public String toString() {
+    return String.format("%s (%d hari)", getRuleName(), getIntervalDays());
+  }
 
-    @Override
-    public int toBeCompared() {
-        return this.id;
-    }
+  @Override
+  public int toBeCompared() {
+    return this.id;
+  }
 }

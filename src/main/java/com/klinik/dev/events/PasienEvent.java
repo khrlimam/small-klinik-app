@@ -8,11 +8,11 @@ import lombok.Data;
  */
 @Data
 public class PasienEvent {
-    private Pasien pasien;
-    private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
+  private Pasien pasien;
+  private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
 
-    public PasienEvent(Pasien pasien, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
-        this.pasien = pasien;
-        this.OPERATION_TYPE = OPERATION_TYPE;
-    }
+  public PasienEvent(Pasien pasien, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
+    this.pasien = pasien;
+    this.OPERATION_TYPE = OPERATION_TYPE;
+  }
 }

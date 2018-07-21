@@ -12,20 +12,20 @@ import java.sql.SQLException;
  */
 public class DB {
 
-    private static ConnectionSource connectionSource;
+  private static ConnectionSource connectionSource;
 
-    public static ConnectionSource getDB() {
-        if (connectionSource != null)
-            return connectionSource;
-        try {
-            DatabaseType databaseType = new DerbyEmbeddedDatabaseType();
-            String protocol = "jdbc:derby:";
-            String dbUrl = String.format("%sklinikDB;create=true", protocol);
-            connectionSource = new JdbcConnectionSource(dbUrl, databaseType);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connectionSource;
+  public static ConnectionSource getDB() {
+    if (connectionSource != null)
+      return connectionSource;
+    try {
+      DatabaseType databaseType = new DerbyEmbeddedDatabaseType();
+      String protocol = "jdbc:derby:";
+      String dbUrl = String.format("%sklinikDB;create=true", protocol);
+      connectionSource = new JdbcConnectionSource(dbUrl, databaseType);
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
+    return connectionSource;
+  }
 
 }

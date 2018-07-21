@@ -16,28 +16,28 @@ import java.util.ResourceBundle;
 @Data
 public class Main implements Initializable {
 
-    private Stage pasienStage, tindakanDanRuleStage, monitorPemasukanStage;
+  private Stage pasienStage, tindakanDanRuleStage, monitorPemasukanStage;
 
-    public void initialize(URL location, ResourceBundle resources) {
-        pasienStage = Util.makeDialogStage(getClass().getResource("/uis/patientdialog.fxml"), "Tambah pasien", App.PRIMARY_STAGE);
-        tindakanDanRuleStage = Util.makeDialogStage(getClass().getResource("/uis/tindakanruleformdialog.fxml"), "Tambah rule dan tindakan", App.PRIMARY_STAGE);
-    }
+  public void initialize(URL location, ResourceBundle resources) {
+    pasienStage = Util.makeDialogStage(getClass().getResource("/uis/patientdialog.fxml"), "Tambah pasien", App.PRIMARY_STAGE);
+    tindakanDanRuleStage = Util.makeDialogStage(getClass().getResource("/uis/tindakanruleformdialog.fxml"), "Tambah rule dan tindakan", App.PRIMARY_STAGE);
+  }
 
-    @FXML
-    private void showFormTambahPasien() {
-        if (pasienStage != null)
-            pasienStage.showAndWait();
-    }
+  @FXML
+  private void showFormTambahPasien() {
+    if (pasienStage != null)
+      pasienStage.showAndWait();
+  }
 
-    @FXML
-    private void showFormTambahTindakanDanRule() {
-        if (tindakanDanRuleStage != null)
-            tindakanDanRuleStage.showAndWait();
-    }
+  @FXML
+  private void showFormTambahTindakanDanRule() {
+    if (tindakanDanRuleStage != null)
+      tindakanDanRuleStage.showAndWait();
+  }
 
-    @FXML
-    private void showMonitorPemasukan() {
-        monitorPemasukanStage = Util.makeDialogStage(getClass().getResource("/uis/monitorpemasukan.fxml"), "Monitor pemasukan", App.PRIMARY_STAGE);
-        monitorPemasukanStage.showAndWait();
-    }
+  @FXML
+  private void showMonitorPemasukan() {
+    monitorPemasukanStage = Util.makeDialogStage(getClass().getResource("/uis/monitorpemasukan.fxml"), "Monitor pemasukan", App.PRIMARY_STAGE);
+    monitorPemasukanStage.showAndWait();
+  }
 }

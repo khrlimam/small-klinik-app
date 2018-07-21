@@ -25,74 +25,74 @@ import java.util.ResourceBundle;
 @Data
 public class TindakanAndRuleFormDialog implements Initializable {
 
-    private Dao ruleDao = Rule.getDao();
-    private Dao tindakanDao = Tindakan.getDao();
-    private Dao<TindakanRule, Void> tindakanRuleDao = TindakanRule.getDao();
+  private Dao ruleDao = Rule.getDao();
+  private Dao tindakanDao = Tindakan.getDao();
+  private Dao<TindakanRule, Void> tindakanRuleDao = TindakanRule.getDao();
 
-    public enum METODE {
-        SIMPAN_RULE,
-        SIMPAN_TINDAKAN
+  public enum METODE {
+    SIMPAN_RULE,
+    SIMPAN_TINDAKAN
+  }
+
+  public TindakanAndRuleFormDialog() throws SQLException {
+  }
+
+  @FXML
+  private RuleForm ruleFormController;
+  @FXML
+  private TindakanForm tindakanFormController;
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    ruleFormController.setOnOkFormContract(new SimpanRuleAtauTindakan(METODE.SIMPAN_RULE));
+    tindakanFormController.setOnOkFormContract(new SimpanRuleAtauTindakan(METODE.SIMPAN_TINDAKAN));
+  }
+
+  private class SimpanRuleAtauTindakan implements OnOkFormContract {
+    METODE metode;
+
+    public SimpanRuleAtauTindakan(METODE metode) {
+      this.metode = metode;
     }
-
-    public TindakanAndRuleFormDialog() throws SQLException {
-    }
-
-    @FXML
-    private RuleForm ruleFormController;
-    @FXML
-    private TindakanForm tindakanFormController;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        ruleFormController.setOnOkFormContract(new SimpanRuleAtauTindakan(METODE.SIMPAN_RULE));
-        tindakanFormController.setOnOkFormContract(new SimpanRuleAtauTindakan(METODE.SIMPAN_TINDAKAN));
+    public void onPositive() {
+      int create = 0;
+      switch (metode) {
+        case SIMPAN_RULE:
+          try {
+            Rule rule = ruleFormController.getRule();
+            create = ruleDao.create(rule);
+            EventBus.getInstance().post(new RuleEvent(rule, OPERATION_TYPE.CREATE));
+          } catch (SQLException e) {
+            e.printStackTrace();
+            Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
+          }
+          break;
+        case SIMPAN_TINDAKAN:
+          try {
+            Tindakan tindakan = tindakanFormController.getTindakan();
+            create = tindakanDao.create(tindakan);
+            TindakanRule tindakanRule = new TindakanRule();
+            tindakanRule.setTindakan(tindakan);
+            tindakanFormController.getSelectedRulesFromLvRules().forEach(rule -> {
+              tindakanRule.setRule(rule);
+              try {
+                tindakanRuleDao.create(tindakanRule);
+              } catch (SQLException e) {
+                e.printStackTrace();
+              }
+            });
+            tindakanDao.refresh(tindakan);
+            EventBus.getInstance().post(new TindakanEvent(tindakan, OPERATION_TYPE.CREATE));
+          } catch (SQLException e) {
+            e.printStackTrace();
+            Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
+          }
+          break;
+      }
+      if (create == 1)
+        Util.showNotif("Sukses", "Berhasil menanmbahkan data", NotificationType.SUCCESS);
     }
-
-    private class SimpanRuleAtauTindakan implements OnOkFormContract {
-        METODE metode;
-
-        public SimpanRuleAtauTindakan(METODE metode) {
-            this.metode = metode;
-        }
-
-        @Override
-        public void onPositive() {
-            int create = 0;
-            switch (metode) {
-                case SIMPAN_RULE:
-                    try {
-                        Rule rule = ruleFormController.getRule();
-                        create = ruleDao.create(rule);
-                        EventBus.getInstance().post(new RuleEvent(rule, OPERATION_TYPE.CREATE));
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
-                    }
-                    break;
-                case SIMPAN_TINDAKAN:
-                    try {
-                        Tindakan tindakan = tindakanFormController.getTindakan();
-                        create = tindakanDao.create(tindakan);
-                        TindakanRule tindakanRule = new TindakanRule();
-                        tindakanRule.setTindakan(tindakan);
-                        tindakanFormController.getSelectedRulesFromLvRules().forEach(rule -> {
-                            tindakanRule.setRule(rule);
-                            try {
-                                tindakanRuleDao.create(tindakanRule);
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        tindakanDao.refresh(tindakan);
-                        EventBus.getInstance().post(new TindakanEvent(tindakan, OPERATION_TYPE.CREATE));
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        Util.showNotif("Error", String.format("Maaf ada kesalahan: %s", e.getMessage()), NotificationType.ERROR);
-                    }
-                    break;
-            }
-            if (create == 1)
-                Util.showNotif("Sukses", "Berhasil menanmbahkan data", NotificationType.SUCCESS);
-        }
-    }
+  }
 }

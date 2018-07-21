@@ -9,12 +9,12 @@ import java.util.List;
  * Created by khairulimam on 01/02/17.
  */
 public class ComparableCollections {
-    public static void sort(List toBeSort, Comparable comparable) {
-        Collections.sort(toBeSort, ComparableComparator.getInstance(comparable));
-    }
+  public static void sort(List toBeSort, Comparable comparable) {
+    Collections.sort(toBeSort, ComparableComparator.getInstance(comparable));
+  }
 
-    public static int binarySearch(List searchFrom, Comparable toBeSearch) {
-        return Collections.binarySearch(searchFrom, toBeSearch, ComparableComparator.getInstance(toBeSearch));
-    }
+  public static int binarySearch(List searchFrom, Comparable toBeSearch) {
+    return Collections.binarySearch(searchFrom, toBeSearch, ComparableComparator.getInstance(toBeSearch));
+  }
 
 }

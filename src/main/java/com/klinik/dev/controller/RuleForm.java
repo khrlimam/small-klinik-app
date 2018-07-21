@@ -14,39 +14,39 @@ import java.util.ResourceBundle;
 
 /**
  * Created by khairulimam on 29/01/17.
- * <p>
+ *
  * <b>This class only acting as controller for ruleform.fxml</b>
  * all implementations done through interface/contract
  */
 @Data
 public class RuleForm implements Initializable {
 
-    private OnOkFormContract onOkFormContract;
+  private OnOkFormContract onOkFormContract;
 
-    @FXML
-    TextField tfNamaJenisRule;
-    @FXML
-    NumberTextField tfJarakHari;
+  @FXML
+  TextField tfNamaJenisRule;
+  @FXML
+  NumberTextField tfJarakHari;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
 
+  }
+
+  @FXML
+  private void onOkCreate() {
+    if (onOkFormContract != null) {
+      onOkFormContract.onPositive();
+      return;
     }
+    Log.w(getClass(), "Contract ain't implemented");
+  }
 
-    @FXML
-    private void onOkCreate() {
-        if (onOkFormContract != null) {
-            onOkFormContract.onPositive();
-            return;
-        }
-        Log.w(getClass(), "Contract ain't implemented");
-    }
-
-    public Rule getRule() {
-        Rule rule = new Rule();
-        rule.setIntervalDays(Integer.parseInt(tfJarakHari.getText()));
-        rule.setRuleName(tfNamaJenisRule.getText());
-        return rule;
-    }
+  public Rule getRule() {
+    Rule rule = new Rule();
+    rule.setIntervalDays(Integer.parseInt(tfJarakHari.getText()));
+    rule.setRuleName(tfNamaJenisRule.getText());
+    return rule;
+  }
 
 }

@@ -41,138 +41,138 @@ import java.util.ResourceBundle;
 @Data
 public class PatientForm implements Initializable {
 
-    private OnOkFormContract formContract;
-    private FileChooser fileChooser = new FileChooser();
+  private OnOkFormContract formContract;
+  private FileChooser fileChooser = new FileChooser();
 
-    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
-    private ObservableList<Tindakan> tindakanLists = FXCollections.observableArrayList(tindakanDao.queryForAll());
+  private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
+  private ObservableList<Tindakan> tindakanLists = FXCollections.observableArrayList(tindakanDao.queryForAll());
 
 
-    @FXML
-    private TextField tfNama, tfPekerjaan;
-    @FXML
-    private NumberTextField tfNoTelpon, tfTarif;
-    @FXML
-    private TextArea taAlamat, taDiagnosis;
-    @FXML
-    private ChoiceBox cbTindakan;
-    @FXML
-    private RadioButton rbSudah, rbBelum;
-    @FXML
-    private DatePicker dtTglLahir;
+  @FXML
+  private TextField tfNama, tfPekerjaan;
+  @FXML
+  private NumberTextField tfNoTelpon, tfTarif;
+  @FXML
+  private TextArea taAlamat, taDiagnosis;
+  @FXML
+  private ChoiceBox cbTindakan;
+  @FXML
+  private RadioButton rbSudah, rbBelum;
+  @FXML
+  private DatePicker dtTglLahir;
 
-    ToggleGroup rbStatusToggleGroup = new ToggleGroup();
-    private File foto;
+  ToggleGroup rbStatusToggleGroup = new ToggleGroup();
+  private File foto;
 
-    public PatientForm() throws SQLException {
+  public PatientForm() throws SQLException {
+  }
+
+  public void initialize(URL location, ResourceBundle resources) {
+    EventBus.getInstance().register(this);
+    cbTindakan.setItems(tindakanLists);
+    initComponents();
+  }
+
+  private void initComponents() {
+    fileChooser.getExtensionFilters().add(FileUtil.ALLOWED_IMAGE);
+    fileChooser.setTitle("Pilih gambar");
+    dtTglLahir.setValue(LocalDate.now().minusYears(22));
+    rbBelum.setToggleGroup(rbStatusToggleGroup);
+    rbSudah.setToggleGroup(rbStatusToggleGroup);
+    rbBelum.setSelected(true);
+    cbTindakan.getSelectionModel().select(0);
+  }
+
+  @FXML
+  protected void onOk() {
+    if (this.formContract != null) {
+      formContract.onPositive();
+      resetForm();
+      return;
     }
+    Log.w(PatientForm.class, "Contract ain't implemented yet!");
+  }
 
-    public void initialize(URL location, ResourceBundle resources) {
-        EventBus.getInstance().register(this);
-        cbTindakan.setItems(tindakanLists);
-        initComponents();
-    }
+  public RiwayatTindakan getRiwayatTindakan(Pasien newPasien) {
+    RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
+    riwayatTindakan.setPasien(newPasien);
+    riwayatTindakan.setDiagnosis(taDiagnosis.getText());
+    riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
+    riwayatTindakan.setTindakan(newPasien.getTindakan());
+    riwayatTindakan.setTglCheckup(DateTime.now());
+    return riwayatTindakan;
+  }
 
-    private void initComponents() {
-        fileChooser.getExtensionFilters().add(FileUtil.ALLOWED_IMAGE);
-        fileChooser.setTitle("Pilih gambar");
-        dtTglLahir.setValue(LocalDate.now().minusYears(22));
-        rbBelum.setToggleGroup(rbStatusToggleGroup);
-        rbSudah.setToggleGroup(rbStatusToggleGroup);
-        rbBelum.setSelected(true);
-        cbTindakan.getSelectionModel().select(0);
-    }
+  private RadioButton getRbStatus() {
+    return (RadioButton) this.rbStatusToggleGroup.getSelectedToggle();
+  }
 
-    @FXML
-    protected void onOk() {
-        if (this.formContract != null) {
-            formContract.onPositive();
-            resetForm();
-            return;
-        }
-        Log.w(PatientForm.class, "Contract ain't implemented yet!");
-    }
+  private STATUS getSTatus() {
+    String id = getRbStatus().getId();
+    if (id.equals(rbSudah.getId()))
+      return STATUS.MENIKAH;
+    return STATUS.BELUM_MENIKAH;
+  }
 
-    public RiwayatTindakan getRiwayatTindakan(Pasien newPasien) {
-        RiwayatTindakan riwayatTindakan = new RiwayatTindakan();
-        riwayatTindakan.setPasien(newPasien);
-        riwayatTindakan.setDiagnosis(taDiagnosis.getText());
-        riwayatTindakan.setTarif(Double.parseDouble(tfTarif.getText()));
-        riwayatTindakan.setTindakan(newPasien.getTindakan());
-        riwayatTindakan.setTglCheckup(DateTime.now());
-        return riwayatTindakan;
-    }
+  @FXML
+  public void resetForm() {
+    this.foto = null;
+    tfNama.setText("");
+    tfNoTelpon.setText("");
+    tfPekerjaan.setText("");
+    taAlamat.setText("");
+    taDiagnosis.setText("");
+    tfTarif.setText("");
+    cbTindakan.getSelectionModel().select(0);
+    rbBelum.setSelected(true);
+  }
 
-    private RadioButton getRbStatus() {
-        return (RadioButton) this.rbStatusToggleGroup.getSelectedToggle();
-    }
+  public Pasien getPasien() throws SQLException {
+    Pasien pasien = new Pasien();
+    pasien.setNama(tfNama.getText());
+    pasien.setDiagnosis(taDiagnosis.getText());
+    pasien.setNoTelepon(tfNoTelpon.getText());
+    pasien.setPekerjaan(tfPekerjaan.getText());
+    pasien.setStatus(getSTatus());
+    pasien.setAlamat(taAlamat.getText());
+    pasien.setTglLahir(new DateTime(dtTglLahir.getValue().toString()));
+    pasien.setTglRegister(new DateTime());
+    Tindakan selectedTindakan = (Tindakan) cbTindakan.getSelectionModel().getSelectedItem();
+    tindakanDao.refresh(selectedTindakan);
+    pasien.setTindakan(selectedTindakan);
+    pasien.setCheckupTerakhir(DateTime.now());
+    return pasien;
+  }
 
-    private STATUS getSTatus() {
-        String id = getRbStatus().getId();
-        if (id.equals(rbSudah.getId()))
-            return STATUS.MENIKAH;
-        return STATUS.BELUM_MENIKAH;
+  @Subscribe
+  public void onTindakan(TindakanEvent tindakanEvent) {
+    Tindakan tindakan = tindakanEvent.getTindakan();
+    int index = ComparableCollections.binarySearch(tindakanLists, tindakanEvent.getTindakan());
+    switch (tindakanEvent.getOPERATION_TYPE()) {
+      case CREATE:
+        tindakanLists.add(tindakan);
+        break;
+      case DELETE:
+        if (index > -1)
+          tindakanLists.remove(index);
+        break;
+      case UPDATE:
+        tindakanLists.set(index, tindakan);
+        break;
     }
+  }
 
-    @FXML
-    public void resetForm() {
-        this.foto = null;
-        tfNama.setText("");
-        tfNoTelpon.setText("");
-        tfPekerjaan.setText("");
-        taAlamat.setText("");
-        taDiagnosis.setText("");
-        tfTarif.setText("");
-        cbTindakan.getSelectionModel().select(0);
-        rbBelum.setSelected(true);
+  public void pilihGambar() {
+    File sourceFile = fileChooser.showOpenDialog(App.PRIMARY_STAGE);
+    try {
+      Magic.getMagicMatch(sourceFile, false).getMimeType();
+      this.foto = sourceFile;
+    } catch (MagicParseException e) {
+      e.printStackTrace();
+    } catch (MagicMatchNotFoundException e) {
+      Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getMessage()), NotificationType.ERROR);
+    } catch (MagicException e) {
+      e.printStackTrace();
     }
-
-    public Pasien getPasien() throws SQLException {
-        Pasien pasien = new Pasien();
-        pasien.setNama(tfNama.getText());
-        pasien.setDiagnosis(taDiagnosis.getText());
-        pasien.setNoTelepon(tfNoTelpon.getText());
-        pasien.setPekerjaan(tfPekerjaan.getText());
-        pasien.setStatus(getSTatus());
-        pasien.setAlamat(taAlamat.getText());
-        pasien.setTglLahir(new DateTime(dtTglLahir.getValue().toString()));
-        pasien.setTglRegister(new DateTime());
-        Tindakan selectedTindakan = (Tindakan) cbTindakan.getSelectionModel().getSelectedItem();
-        tindakanDao.refresh(selectedTindakan);
-        pasien.setTindakan(selectedTindakan);
-        pasien.setCheckupTerakhir(DateTime.now());
-        return pasien;
-    }
-
-    @Subscribe
-    public void onTindakan(TindakanEvent tindakanEvent) {
-        Tindakan tindakan = tindakanEvent.getTindakan();
-        int index = ComparableCollections.binarySearch(tindakanLists, tindakanEvent.getTindakan());
-        switch (tindakanEvent.getOPERATION_TYPE()) {
-            case CREATE:
-                tindakanLists.add(tindakan);
-                break;
-            case DELETE:
-                if (index > -1)
-                    tindakanLists.remove(index);
-                break;
-            case UPDATE:
-                tindakanLists.set(index, tindakan);
-                break;
-        }
-    }
-
-    public void pilihGambar() {
-        File sourceFile = fileChooser.showOpenDialog(App.PRIMARY_STAGE);
-        try {
-            Magic.getMagicMatch(sourceFile, false).getMimeType();
-            this.foto = sourceFile;
-        } catch (MagicParseException e) {
-            e.printStackTrace();
-        } catch (MagicMatchNotFoundException e) {
-            Util.showNotif("Error", String.format("Gambar tidak valid! %s", e.getMessage()), NotificationType.ERROR);
-        } catch (MagicException e) {
-            e.printStackTrace();
-        }
-    }
+  }
 }

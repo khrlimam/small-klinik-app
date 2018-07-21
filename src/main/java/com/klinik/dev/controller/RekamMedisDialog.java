@@ -20,21 +20,21 @@ import java.util.ResourceBundle;
 @Data
 public class RekamMedisDialog implements Initializable {
 
-    @FXML
-    private Label lblPatientname;
-    @FXML
-    private ListView lvMedicalRecord;
+  @FXML
+  private Label lblPatientname;
+  @FXML
+  private ListView lvMedicalRecord;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
 
+  }
+
+  public void setLvMedicalRecordItems(ForeignCollection<RiwayatTindakan> recordItems) {
+    List<String> lvItems = new ArrayList<>();
+    for (RiwayatTindakan riwayatTindakan : recordItems) {
+      lvItems.add(riwayatTindakan.toString());
     }
-
-    public void setLvMedicalRecordItems(ForeignCollection<RiwayatTindakan> recordItems) {
-        List<String> lvItems = new ArrayList<>();
-        for (RiwayatTindakan riwayatTindakan : recordItems) {
-            lvItems.add(riwayatTindakan.toString());
-        }
-        this.lvMedicalRecord.setItems(FXCollections.observableArrayList(lvItems));
-    }
+    this.lvMedicalRecord.setItems(FXCollections.observableArrayList(lvItems));
+  }
 }

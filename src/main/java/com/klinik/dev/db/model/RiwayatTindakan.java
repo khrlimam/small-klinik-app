@@ -19,51 +19,51 @@ import java.sql.SQLException;
 @DatabaseTable(tableName = RiwayatTindakan.TABLE_NAME)
 @Data
 public class RiwayatTindakan implements Comparable {
-    @DatabaseField(generatedId = true)
-    private int id;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Pasien pasien;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Tindakan tindakan;
-    @DatabaseField
-    private String diagnosis;
-    @DatabaseField
-    private double tarif;
-    @DatabaseField(dataType = DataType.DATE_TIME)
-    private DateTime tglCheckup;
+  @DatabaseField(generatedId = true)
+  private int id;
+  @DatabaseField(foreign = true, foreignAutoRefresh = true)
+  private Pasien pasien;
+  @DatabaseField(foreign = true, foreignAutoRefresh = true)
+  private Tindakan tindakan;
+  @DatabaseField
+  private String diagnosis;
+  @DatabaseField
+  private double tarif;
+  @DatabaseField(dataType = DataType.DATE_TIME)
+  private DateTime tglCheckup;
 
-    public static final String TABLE_NAME = "riwayat_tindakan";
+  public static final String TABLE_NAME = "riwayat_tindakan";
 
-    @Override
-    public String toString() {
-        String tgl = pasien.getCheckupTerakhirActualDate().toString("dd.MM.yyyy");
-        String jam = pasien.getCheckupTerakhirActualDate().toString("HH:mm:ss");
-        return String.format("%s melakukan %s pada tgl %s jam %s", pasien.getNama(), tindakan.getNamaTindakan(), tgl, jam);
+  @Override
+  public String toString() {
+    String tgl = pasien.getCheckupTerakhirActualDate().toString("dd.MM.yyyy");
+    String jam = pasien.getCheckupTerakhirActualDate().toString("HH:mm:ss");
+    return String.format("%s melakukan %s pada tgl %s jam %s", pasien.getNama(), tindakan.getNamaTindakan(), tgl, jam);
+  }
+
+  public String getTanggal() {
+    return tglCheckup.toString(String.format(Util.DATE_TIME_PATTERN));
+  }
+
+  public static Dao<RiwayatTindakan, Integer> getDao() {
+    try {
+      return DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 
-    public String getTanggal() {
-        return tglCheckup.toString(String.format(Util.DATE_TIME_PATTERN));
-    }
+  public int getYear() {
+    return tglCheckup.getYear();
+  }
 
-    public static Dao<RiwayatTindakan, Integer> getDao() {
-        try {
-            return DaoManager.createDao(DB.getDB(), RiwayatTindakan.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+  public int getMonth() {
+    return tglCheckup.getMonthOfYear();
+  }
 
-    public int getYear() {
-        return tglCheckup.getYear();
-    }
-
-    public int getMonth() {
-        return tglCheckup.getMonthOfYear();
-    }
-
-    @Override
-    public int toBeCompared() {
-        return this.id;
-    }
+  @Override
+  public int toBeCompared() {
+    return this.id;
+  }
 }

@@ -35,94 +35,94 @@ import java.util.ResourceBundle;
 @Data
 public class TindakanForm implements Initializable {
 
-    private OnOkFormContract onOkFormContract;
+  private OnOkFormContract onOkFormContract;
 
-    private Dao<Rule, Integer> ruleDao = Rule.getDao();
-    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
-    private Dao<TindakanRule, Void> tindakanRuleDao = TindakanRule.getDao();
+  private Dao<Rule, Integer> ruleDao = Rule.getDao();
+  private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
+  private Dao<TindakanRule, Void> tindakanRuleDao = TindakanRule.getDao();
 
-    private ObservableList<Rule> ruleLists = FXCollections.observableArrayList(ruleDao.queryForAll());
+  private ObservableList<Rule> ruleLists = FXCollections.observableArrayList(ruleDao.queryForAll());
 
-    @FXML
-    private TextField tfNamaTindakan;
-    @FXML
-    private ListView<Rule> lvRules;
+  @FXML
+  private TextField tfNamaTindakan;
+  @FXML
+  private ListView<Rule> lvRules;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        EventBus.getInstance().register(this);
-        this.lvRules.setItems(ruleLists);
-        this.lvRules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        EventBus.getInstance().register(this);
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    EventBus.getInstance().register(this);
+    this.lvRules.setItems(ruleLists);
+    this.lvRules.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    EventBus.getInstance().register(this);
+  }
+
+  private void updateRulesItem(Rule rule) {
+    int indexOfUpdatedRule = ComparableCollections.binarySearch(ruleLists, rule);
+    if (indexOfUpdatedRule > -1) {
+      this.ruleLists.set(indexOfUpdatedRule, rule);
     }
+  }
 
-    private void updateRulesItem(Rule rule) {
-        int indexOfUpdatedRule = ComparableCollections.binarySearch(ruleLists, rule);
-        if (indexOfUpdatedRule > -1) {
-            this.ruleLists.set(indexOfUpdatedRule, rule);
+  private void deleteRulesItem(Rule rule) {
+    int index = ComparableCollections.binarySearch(ruleLists, rule);
+    if (index > -1) {
+      this.ruleLists.remove(index);
+    }
+  }
+
+  public TindakanForm() throws SQLException {
+  }
+
+  @FXML
+  private void onOkCreate() {
+    if (onOkFormContract != null) {
+      onOkFormContract.onPositive();
+      return;
+    }
+    Log.w(getClass(), "Contract ain't implemented yet");
+  }
+
+  public Tindakan getTindakan() {
+    Tindakan tindakan = new Tindakan();
+    tindakan.setNamaTindakan(tfNamaTindakan.getText());
+    return tindakan;
+  }
+
+  public List<Rule> getSelectedRulesFromLvRules() {
+    List<Rule> rules = new ArrayList<>();
+    List<Integer> selectedIndices = lvRules.getSelectionModel().getSelectedIndices();
+    selectedIndices.forEach(index -> rules.add(ruleLists.get(index)));
+    return rules;
+  }
+
+  @Subscribe
+  public void onRule(RuleEvent ruleEvent) {
+    Rule rule = ruleEvent.getRule();
+    switch (ruleEvent.getOPERATION_TYPE()) {
+      case CREATE:
+        this.ruleLists.add(rule);
+        break;
+      case UPDATE:
+        updateRulesItem(rule);
+        break;
+      case DELETE:
+        deleteRulesItem(rule);
+        break;
+    }
+  }
+
+  public void onKeyPressed(KeyEvent keyEvent) throws SQLException {
+    if (keyEvent.getCode() == KeyCode.D) {
+      Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
+      boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
+      if (isOK) {
+        Rule rule = ruleLists.get(lvRules.getSelectionModel().getSelectedIndex());
+        int deleted = ruleDao.delete(rule);
+        if (deleted == 1) {
+          Util.showNotif("Sukses", "Data rule telah dihapus", NotificationType.SUCCESS);
+          EventBus.getInstance().post(new RuleEvent(rule, OPERATION_TYPE.DELETE));
         }
+      }
     }
-
-    private void deleteRulesItem(Rule rule) {
-        int index = ComparableCollections.binarySearch(ruleLists, rule);
-        if (index > -1) {
-            this.ruleLists.remove(index);
-        }
-    }
-
-    public TindakanForm() throws SQLException {
-    }
-
-    @FXML
-    private void onOkCreate() {
-        if (onOkFormContract != null) {
-            onOkFormContract.onPositive();
-            return;
-        }
-        Log.w(getClass(), "Contract ain't implemented yet");
-    }
-
-    public Tindakan getTindakan() {
-        Tindakan tindakan = new Tindakan();
-        tindakan.setNamaTindakan(tfNamaTindakan.getText());
-        return tindakan;
-    }
-
-    public List<Rule> getSelectedRulesFromLvRules() {
-        List<Rule> rules = new ArrayList<>();
-        List<Integer> selectedIndices = lvRules.getSelectionModel().getSelectedIndices();
-        selectedIndices.forEach(index -> rules.add(ruleLists.get(index)));
-        return rules;
-    }
-
-    @Subscribe
-    public void onRule(RuleEvent ruleEvent) {
-        Rule rule = ruleEvent.getRule();
-        switch (ruleEvent.getOPERATION_TYPE()) {
-            case CREATE:
-                this.ruleLists.add(rule);
-                break;
-            case UPDATE:
-                updateRulesItem(rule);
-                break;
-            case DELETE:
-                deleteRulesItem(rule);
-                break;
-        }
-    }
-
-    public void onKeyPressed(KeyEvent keyEvent) throws SQLException {
-        if (keyEvent.getCode() == KeyCode.D) {
-            Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
-            boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
-            if (isOK) {
-                Rule rule = ruleLists.get(lvRules.getSelectionModel().getSelectedIndex());
-                int deleted = ruleDao.delete(rule);
-                if (deleted == 1) {
-                    Util.showNotif("Sukses", "Data rule telah dihapus", NotificationType.SUCCESS);
-                    EventBus.getInstance().post(new RuleEvent(rule, OPERATION_TYPE.DELETE));
-                }
-            }
-        }
-    }
+  }
 }

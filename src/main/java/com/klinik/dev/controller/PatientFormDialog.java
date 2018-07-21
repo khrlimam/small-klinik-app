@@ -26,36 +26,36 @@ import java.util.ResourceBundle;
 @Data
 public class PatientFormDialog implements Initializable, OnOkFormContract {
 
-    private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
-    private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = RiwayatTindakan.getDao();
+  private Dao<Pasien, Integer> pasienDao = Pasien.getDao();
+  private Dao<RiwayatTindakan, Integer> riwayatTindakanDao = RiwayatTindakan.getDao();
 
-    @FXML
-    PatientForm patientFormController;
+  @FXML
+  PatientForm patientFormController;
 
-    public PatientFormDialog() throws SQLException {
+  public PatientFormDialog() throws SQLException {
+  }
+
+  public void initialize(URL location, ResourceBundle resources) {
+    patientFormController.setFormContract(this);
+  }
+
+  public void onPositive() {
+    try {
+      Pasien pasien = patientFormController.getPasien();
+      if (patientFormController.getFoto() != null) {
+        File fileSrc = patientFormController.getFoto();
+        String fileExtension = Files.getFileExtension(fileSrc.getName());
+        File fileDestination = FileUtil.generateFileToUploadFolder(fileExtension);
+        FileUtil.uploadFile(fileSrc, fileDestination);
+        pasien.setFotoPath(fileDestination.getAbsolutePath());
+      }
+      RiwayatTindakan riwayatTindakan = patientFormController.getRiwayatTindakan(pasien);
+      pasienDao.create(pasien);
+      riwayatTindakanDao.create(riwayatTindakan);
+      Util.showNotif("Sukses", "Berhasil menambahkan data", NotificationType.SUCCESS);
+      EventBus.getInstance().post(new PasienEvent(pasien, OPERATION_TYPE.CREATE));
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
-
-    public void initialize(URL location, ResourceBundle resources) {
-        patientFormController.setFormContract(this);
-    }
-
-    public void onPositive() {
-        try {
-            Pasien pasien = patientFormController.getPasien();
-            if (patientFormController.getFoto() != null) {
-                File fileSrc = patientFormController.getFoto();
-                String fileExtension = Files.getFileExtension(fileSrc.getName());
-                File fileDestination = FileUtil.generateFileToUploadFolder(fileExtension);
-                FileUtil.uploadFile(fileSrc, fileDestination);
-                pasien.setFotoPath(fileDestination.getAbsolutePath());
-            }
-            RiwayatTindakan riwayatTindakan = patientFormController.getRiwayatTindakan(pasien);
-            pasienDao.create(pasien);
-            riwayatTindakanDao.create(riwayatTindakan);
-            Util.showNotif("Sukses", "Berhasil menambahkan data", NotificationType.SUCCESS);
-            EventBus.getInstance().post(new PasienEvent(pasien, OPERATION_TYPE.CREATE));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+  }
 }

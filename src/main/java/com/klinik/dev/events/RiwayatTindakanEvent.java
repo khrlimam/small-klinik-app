@@ -8,11 +8,11 @@ import lombok.Data;
  */
 @Data
 public class RiwayatTindakanEvent {
-    private RiwayatTindakan riwayatTindakan;
-    private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
+  private RiwayatTindakan riwayatTindakan;
+  private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
 
-    public RiwayatTindakanEvent(RiwayatTindakan riwayatTindakan, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
-        this.riwayatTindakan = riwayatTindakan;
-        this.OPERATION_TYPE = OPERATION_TYPE;
-    }
+  public RiwayatTindakanEvent(RiwayatTindakan riwayatTindakan, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
+    this.riwayatTindakan = riwayatTindakan;
+    this.OPERATION_TYPE = OPERATION_TYPE;
+  }
 }

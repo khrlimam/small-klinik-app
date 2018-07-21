@@ -15,17 +15,17 @@ import java.sql.SQLException;
 @Data
 @DatabaseTable(tableName = "tindakanrule")
 public class TindakanRule {
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Tindakan tindakan;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Rule rule;
+  @DatabaseField(foreign = true, foreignAutoRefresh = true)
+  private Tindakan tindakan;
+  @DatabaseField(foreign = true, foreignAutoRefresh = true)
+  private Rule rule;
 
-    public static Dao<TindakanRule, Void> getDao() {
-        try {
-            return DaoManager.createDao(DB.getDB(), TindakanRule.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+  public static Dao<TindakanRule, Void> getDao() {
+    try {
+      return DaoManager.createDao(DB.getDB(), TindakanRule.class);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 }

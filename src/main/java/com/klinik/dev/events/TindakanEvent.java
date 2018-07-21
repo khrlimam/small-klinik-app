@@ -8,11 +8,11 @@ import lombok.Data;
  */
 @Data
 public class TindakanEvent {
-    private Tindakan tindakan;
-    private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
+  private Tindakan tindakan;
+  private com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE;
 
-    public TindakanEvent(Tindakan tindakan, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
-        this.tindakan = tindakan;
-        this.OPERATION_TYPE = OPERATION_TYPE;
-    }
+  public TindakanEvent(Tindakan tindakan, com.klinik.dev.enums.OPERATION_TYPE OPERATION_TYPE) {
+    this.tindakan = tindakan;
+    this.OPERATION_TYPE = OPERATION_TYPE;
+  }
 }

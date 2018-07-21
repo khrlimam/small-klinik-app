@@ -34,79 +34,79 @@ import java.util.stream.Collectors;
 @Data
 public class LvTindakan implements Initializable {
 
-    private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
-    private ObservableList<TindakanDecorator> listTindakan = FXCollections.observableArrayList();
+  private Dao<Tindakan, Integer> tindakanDao = Tindakan.getDao();
+  private ObservableList<TindakanDecorator> listTindakan = FXCollections.observableArrayList();
 
-    @FXML
-    private ListView<TindakanDecorator> lvTindakan;
+  @FXML
+  private ListView<TindakanDecorator> lvTindakan;
 
-    public LvTindakan() throws SQLException {
+  public LvTindakan() throws SQLException {
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    EventBus.getInstance().register(this);
+    try {
+      tindakanDao.queryForAll().stream().forEach(tindakan -> listTindakan.add(new TindakanDecorator(tindakan)));
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
+    lvTindakan.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    lvTindakan.setItems(listTindakan);
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        EventBus.getInstance().register(this);
-        try {
-            tindakanDao.queryForAll().stream().forEach(tindakan -> listTindakan.add(new TindakanDecorator(tindakan)));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        lvTindakan.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        lvTindakan.setItems(listTindakan);
+  @Subscribe
+  public void onTindakan(TindakanEvent tindakanEvent) {
+    switch (tindakanEvent.getOPERATION_TYPE()) {
+      case CREATE:
+        listTindakan.add(new TindakanDecorator(tindakanEvent.getTindakan()));
+        break;
+      case DELETE:
+        int index = ComparableCollections.binarySearch(listTindakan, tindakanEvent.getTindakan());
+        if (index > -1)
+          listTindakan.remove(index);
+        break;
     }
+  }
 
-    @Subscribe
-    public void onTindakan(TindakanEvent tindakanEvent) {
-        switch (tindakanEvent.getOPERATION_TYPE()) {
-            case CREATE:
-                listTindakan.add(new TindakanDecorator(tindakanEvent.getTindakan()));
-                break;
-            case DELETE:
-                int index = ComparableCollections.binarySearch(listTindakan, tindakanEvent.getTindakan());
-                if (index > -1)
-                    listTindakan.remove(index);
-                break;
-        }
-    }
-
-    @FXML
-    private void onKeyPressed(KeyEvent keyEvent) {
-        switch (keyEvent.getCode()) {
-            case D:
-                deleteTindakanItems();
-                break;
-        }
-    }
-
-    @FXML
-    private void deleteTindakan() {
+  @FXML
+  private void onKeyPressed(KeyEvent keyEvent) {
+    switch (keyEvent.getCode()) {
+      case D:
         deleteTindakanItems();
+        break;
     }
+  }
 
-    private void deleteTindakanItems() {
-        Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
-        boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
-        if (isOK) {
-            List<TindakanDecorator> collectedDeletedTindakan = lvTindakan
-                    .getSelectionModel()
-                    .getSelectedItems()
-                    .stream()
-                    .filter(tindakanDecorator -> {
-                        try {
-                            int deleted = tindakanDao.delete(tindakanDecorator.getTindakan());
-                            return deleted == 1;
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-                    }).collect(Collectors.toList());
+  @FXML
+  private void deleteTindakan() {
+    deleteTindakanItems();
+  }
 
-            collectedDeletedTindakan
-                    .forEach(tindakanDecorator ->
-                            EventBus
-                                    .getInstance()
-                                    .post(new TindakanEvent(tindakanDecorator.getTindakan(), OPERATION_TYPE.DELETE)));
-            Util.showNotif("Sukses", "Tindakan telah dihapus", NotificationType.SUCCESS);
-        }
+  private void deleteTindakanItems() {
+    Optional<ButtonType> decision = Util.deleteConfirmation().showAndWait();
+    boolean isOK = decision.get().getButtonData().equals(ButtonBar.ButtonData.OK_DONE);
+    if (isOK) {
+      List<TindakanDecorator> collectedDeletedTindakan = lvTindakan
+          .getSelectionModel()
+          .getSelectedItems()
+          .stream()
+          .filter(tindakanDecorator -> {
+            try {
+              int deleted = tindakanDao.delete(tindakanDecorator.getTindakan());
+              return deleted == 1;
+            } catch (SQLException e) {
+              e.printStackTrace();
+              return false;
+            }
+          }).collect(Collectors.toList());
+
+      collectedDeletedTindakan
+          .forEach(tindakanDecorator ->
+              EventBus
+                  .getInstance()
+                  .post(new TindakanEvent(tindakanDecorator.getTindakan(), OPERATION_TYPE.DELETE)));
+      Util.showNotif("Sukses", "Tindakan telah dihapus", NotificationType.SUCCESS);
     }
+  }
 }

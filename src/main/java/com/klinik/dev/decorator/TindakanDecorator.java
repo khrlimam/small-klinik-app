@@ -9,19 +9,19 @@ import lombok.Data;
  */
 @Data
 public class TindakanDecorator implements Comparable {
-    private Tindakan tindakan;
+  private Tindakan tindakan;
 
-    public TindakanDecorator(Tindakan tindakan) {
-        this.tindakan = tindakan;
-    }
+  public TindakanDecorator(Tindakan tindakan) {
+    this.tindakan = tindakan;
+  }
 
-    @Override
-    public String toString() {
-        return this.tindakan.toString_();
-    }
+  @Override
+  public String toString() {
+    return this.tindakan.toString_();
+  }
 
-    @Override
-    public int toBeCompared() {
-        return this.tindakan.getId();
-    }
+  @Override
+  public int toBeCompared() {
+    return this.tindakan.getId();
+  }
 }

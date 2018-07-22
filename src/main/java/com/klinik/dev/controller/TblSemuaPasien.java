@@ -385,8 +385,8 @@ public class TblSemuaPasien implements Initializable {
   private List<Map> generateDataFromFilteredList() {
     List<Map> data = new ArrayList<>();
     setSortedListPasien().forEach(pasien -> {
-      Map row = new HashMap();
-      row.put(NO_REKAM_MEDIS_FIELD_NAME, pasien.getNoRekamMedis());
+      Map<String, String> row = new HashMap<>();
+      row.put(NO_REKAM_MEDIS_FIELD_NAME, String.valueOf(pasien.getNoRekamMedis()));
       row.put(NAMA_FIELD_NAME, pasien.getNama());
       row.put(TINDAKAN_FIELD_NAME, pasien.getTindakan().toString());
       row.put(DIAGNOSIS_FIELD_NAME, pasien.getDiagnosis());
